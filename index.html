@@ -1,0 +1,3165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Attendance Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ============================================
+   CSS VARIABLES & RESET
+   ============================================ */
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --primary-light: #e8f0fe;
+  --secondary: #ffffff;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #fd7e14;
+  --info: #17a2b8;
+  --dark: #343a40;
+  --light: #f8f9fa;
+  --gray: #6c757d;
+  --gray-light: #e9ecef;
+  --border: #dee2e6;
+  --shadow: 0 2px 10px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.15);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-width: 260px;
+  --header-height: 60px;
+  --font: 'Poppins', sans-serif;
+  --bg: #f0f2f5;
+  --card-bg: #ffffff;
+  --text: #333333;
+  --text-light: #666666;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-text: #b0b0c0;
+  --sidebar-active: var(--primary);
+  --sidebar-hover: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --card-bg: #16213e;
+  --text: #e0e0e0;
+  --text-light: #a0a0b0;
+  --border: #2a2a4a;
+  --light: #16213e;
+  --gray-light: #2a2a4a;
+  --shadow: 0 2px 10px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+  --primary-light: #1a2a4e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--font); border: none; outline: none; }
+input, select, textarea { font-family: var(--font); outline: none; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+/* ============================================
+   LOGIN PAGE
+   ============================================ */
+#loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a73e8 0%, #6c63ff 50%, #e91e63 100%);
+  animation: fadeIn 0.6s ease;
+  position: relative;
+  overflow: hidden;
+}
+#loginPage::before {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+  top: -100px; right: -100px;
+}
+#loginPage::after {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+  bottom: -80px; left: -80px;
+}
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: 420px;
+  max-width: 95%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  z-index: 1;
+  animation: scaleIn 0.5s ease;
+}
+.login-logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.login-logo .icon {
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, #1a73e8, #6c63ff);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 15px;
+  font-size: 36px; color: white;
+}
+.login-logo h2 {
+  font-size: 22px; font-weight: 700; color: #1a1a2e;
+}
+.login-logo p {
+  font-size: 13px; color: #888; margin-top: 4px;
+}
+.login-form .input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+.login-form .input-group i.field-icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: #aaa; font-size: 16px;
+}
+.login-form .input-group input {
+  width: 100%;
+  padding: 14px 45px 14px 42px;
+  border: 2px solid #e0e0e0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  transition: all 0.3s;
+  background: #fafafa;
+}
+.login-form .input-group input:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+}
+.login-form .input-group .toggle-pass {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: #aaa; font-size: 16px; cursor: pointer;
+}
+.login-form .remember-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 20px; font-size: 13px;
+}
+.login-form .remember-row label {
+  display: flex; align-items: center; gap: 6px; cursor: pointer; color: #555;
+}
+.login-form .remember-row label input[type="checkbox"] {
+  accent-color: var(--primary);
+}
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #1a73e8, #6c63ff);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26,115,232,0.4);
+}
+.login-btn:active { transform: scale(0.98); }
+.login-error {
+  display: none;
+  background: #fde8e8;
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-top: 15px;
+  text-align: center;
+  animation: shake 0.4s ease;
+}
+.login-error.show { display: block; }
+.forgot-hint {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ============================================
+   MAIN APP LAYOUT
+   ============================================ */
+#appContainer { display: none; }
+#appContainer.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-height);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.header-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.hamburger {
+  display: none;
+  background: none; border: none;
+  font-size: 22px; color: var(--text); cursor: pointer;
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.header-logo .logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--primary), #6c63ff);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 18px;
+}
+.header-logo h3 {
+  font-size: 16px; font-weight: 700; color: var(--text);
+}
+.header-center {
+  font-size: 13px; color: var(--text-light); font-weight: 500;
+}
+.header-right {
+  display: flex; align-items: center; gap: 15px;
+}
+.user-info {
+  display: flex; align-items: center; gap: 8px;
+}
+.user-avatar {
+  width: 34px; height: 34px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 14px; font-weight: 600;
+}
+.user-name { font-size: 13px; font-weight: 600; }
+.role-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.role-badge.admin { background: #fde8e8; color: var(--danger); }
+.role-badge.teacher { background: var(--primary-light); color: var(--primary); }
+.logout-btn {
+  padding: 8px 16px;
+  background: var(--danger);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: flex; align-items: center; gap: 6px;
+}
+.logout-btn:hover { background: #c82333; transform: translateY(-1px); }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--header-height);
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  overflow-y: auto;
+  z-index: 90;
+  transition: all 0.3s ease;
+  padding: 10px 0;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 85;
+}
+.sidebar-menu { list-style: none; padding: 0; }
+.sidebar-menu li { padding: 2px 10px; }
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--sidebar-text);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s;
+  font-size: 14px;
+  font-weight: 500;
+}
+.sidebar-menu li a i { width: 22px; text-align: center; font-size: 16px; }
+.sidebar-menu li a:hover {
+  background: var(--sidebar-hover);
+  color: white;
+}
+.sidebar-menu li a.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--header-height);
+  padding: 24px;
+  min-height: calc(100vh - var(--header-height));
+  transition: margin-left 0.3s;
+}
+.content-section {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+.content-section.active { display: block; }
+
+/* ============================================
+   COMMON COMPONENTS
+   ============================================ */
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+.card:hover { box-shadow: var(--shadow-lg); }
+
+/* Summary Cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.summary-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s;
+  cursor: default;
+}
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.summary-card .sc-icon {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.summary-card .sc-icon.blue { background: #e3f2fd; color: #1a73e8; }
+.summary-card .sc-icon.purple { background: #f3e5f5; color: #8e24aa; }
+.summary-card .sc-icon.green { background: #e8f5e9; color: #28a745; }
+.summary-card .sc-icon.red { background: #fde8e8; color: #dc3545; }
+.summary-card .sc-icon.orange { background: #fff3e0; color: #fd7e14; }
+.summary-card .sc-info h4 { font-size: 12px; color: var(--text-light); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-card .sc-info .sc-value { font-size: 26px; font-weight: 700; color: var(--text); }
+
+/* Tables */
+.table-container { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table thead th {
+  background: var(--primary);
+  color: white;
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  position: sticky; top: 0;
+  cursor: pointer;
+}
+table thead th:first-child { border-radius: 8px 0 0 0; }
+table thead th:last-child { border-radius: 0 8px 0 0; }
+table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.2s; }
+table tbody tr:nth-child(even) { background: var(--light); }
+table tbody tr:hover { background: var(--primary-light); }
+table tbody td { padding: 10px 14px; white-space: nowrap; }
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #218838; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #c82333; }
+.btn-warning { background: var(--warning); color: white; }
+.btn-warning:hover { background: #e8690b; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.btn-outline:hover { background: var(--primary); color: white; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon {
+  width: 32px; height: 32px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px; font-size: 14px;
+}
+
+/* Inputs */
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  transition: all 0.3s;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+}
+.form-error {
+  font-size: 11px;
+  color: var(--danger);
+  margin-top: 4px;
+  display: none;
+}
+.form-error.show { display: block; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--card-bg);
+  border-radius: 16px;
+  width: 600px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleIn 0.3s ease;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h3 { font-size: 18px; font-weight: 700; }
+.modal-close {
+  width: 32px; height: 32px;
+  background: var(--gray-light);
+  border: none; border-radius: 50%;
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text); transition: all 0.3s;
+}
+.modal-close:hover { background: var(--danger); color: white; }
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slideInRight 0.4s ease;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 280px;
+}
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.toast.info { background: var(--info); }
+.toast.warning { background: var(--warning); }
+
+/* Confirm Dialog */
+.confirm-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 250;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-overlay.active { display: flex; }
+.confirm-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 30px;
+  width: 400px;
+  max-width: 95%;
+  text-align: center;
+  animation: scaleIn 0.3s ease;
+}
+.confirm-box .confirm-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+.confirm-box h3 { font-size: 18px; margin-bottom: 10px; }
+.confirm-box p { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+.confirm-box .confirm-btns {
+  display: flex; gap: 10px; justify-content: center;
+}
+
+/* Loading Spinner */
+.loading-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.loading-overlay.active { display: flex; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 4px solid var(--gray-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.pagination .page-info { color: var(--text-light); }
+.pagination .page-btns { display: flex; gap: 6px; }
+.page-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.page-btn:hover, .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* Attendance buttons */
+.att-btn {
+  padding: 6px 14px;
+  border: 2px solid;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: transparent;
+  margin: 0 3px;
+}
+.att-btn.present { border-color: var(--success); color: var(--success); }
+.att-btn.present.active { background: var(--success); color: white; }
+.att-btn.absent { border-color: var(--danger); color: var(--danger); }
+.att-btn.absent.active { background: var(--danger); color: white; }
+.att-btn.late { border-color: var(--warning); color: var(--warning); }
+.att-btn.late.active { background: var(--warning); color: white; }
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-success { background: #e8f5e9; color: var(--success); }
+.badge-danger { background: #fde8e8; color: var(--danger); }
+.badge-warning { background: #fff3e0; color: var(--warning); }
+.badge-info { background: #e3f2fd; color: var(--primary); }
+
+/* Progress Ring */
+.progress-ring {
+  position: relative;
+  width: 50px; height: 50px;
+}
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring .progress-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.section-header h2 { font-size: 22px; font-weight: 700; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+.filter-bar .form-group { margin-bottom: 0; }
+.filter-bar .form-control { min-width: 150px; }
+
+/* Quick actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.quick-action-btn {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.quick-action-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+.quick-action-btn i { font-size: 28px; margin-bottom: 10px; display: block; }
+.quick-action-btn span { font-size: 13px; font-weight: 600; }
+
+/* Activity log */
+.activity-list { max-height: 300px; overflow-y: auto; }
+.activity-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item .act-icon {
+  width: 32px; height: 32px;
+  background: var(--primary-light);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--primary);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.activity-item .act-text { color: var(--text); }
+.activity-item .act-time { font-size: 11px; color: var(--text-light); }
+
+/* Alert section */
+.alert-card {
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  background: #fff5f5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+[data-theme="dark"] .alert-card { background: #2a1a1a; }
+.alert-good {
+  padding: 16px;
+  background: #e8f5e9;
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--success);
+  font-weight: 600;
+}
+[data-theme="dark"] .alert-good { background: #1a2a1a; }
+
+/* Calendar */
+.calendar {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--primary);
+  color: white;
+}
+.calendar-header h3 { font-size: 16px; font-weight: 700; }
+.cal-nav-btn {
+  background: rgba(255,255,255,0.2);
+  border: none; color: white;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.cal-nav-btn:hover { background: rgba(255,255,255,0.3); }
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+.cal-day-name {
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--light);
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+.cal-day {
+  padding: 8px;
+  min-height: 55px;
+  text-align: center;
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+  font-weight: 500;
+}
+.cal-day:hover { background: var(--primary-light); }
+.cal-day.empty { cursor: default; }
+.cal-day.empty:hover { background: var(--card-bg); }
+.cal-day.weekend { background: #f5f5f5; }
+[data-theme="dark"] .cal-day.weekend { background: #1a1a2e; }
+.cal-day.holiday { background: #fde8e8; color: var(--danger); }
+[data-theme="dark"] .cal-day.holiday { background: #2a1a1a; }
+.cal-day.today { border: 2px solid var(--primary); font-weight: 700; }
+.cal-day .holiday-name { font-size: 9px; display: block; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-day.present { background: #e8f5e9; color: var(--success); }
+.cal-day.absent { background: #fde8e8; color: var(--danger); }
+.cal-day.late-day { background: #fff3e0; color: var(--warning); }
+
+/* Two-column panels */
+.two-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Attendance count bar */
+.att-count-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  align-items: center;
+  justify-content: center;
+}
+.att-count-item {
+  text-align: center;
+  padding: 8px 20px;
+}
+.att-count-item .count-val { font-size: 28px; font-weight: 700; }
+.att-count-item .count-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; font-weight: 600; }
+
+/* Chart */
+.chart-container {
+  position: relative;
+  height: 250px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200px;
+  padding: 0 10px;
+  border-bottom: 2px solid var(--border);
+}
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.bar {
+  width: 40px;
+  border-radius: 6px 6px 0 0;
+  transition: height 1s ease;
+  min-height: 4px;
+  position: relative;
+}
+.bar-label { font-size: 11px; color: var(--text-light); font-weight: 500; }
+.bar-value { font-size: 11px; font-weight: 700; }
+
+/* Settings sections */
+.settings-section {
+  margin-bottom: 30px;
+}
+.settings-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 50px; height: 26px;
+  display: inline-block;
+}
+.toggle-switch input { display: none; }
+.toggle-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 3px; left: 3px;
+  transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
+
+/* Color theme options */
+.color-options {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.color-option {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s;
+}
+.color-option.active { border-color: var(--text); transform: scale(1.15); }
+
+/* Password Strength */
+.strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  margin-top: 6px;
+  transition: all 0.3s;
+}
+.strength-weak { background: var(--danger); width: 33%; }
+.strength-medium { background: var(--warning); width: 66%; }
+.strength-strong { background: var(--success); width: 100%; }
+
+/* Student initials avatar */
+.student-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Info banner */
+.info-banner {
+  padding: 12px 16px;
+  background: #e3f2fd;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+[data-theme="dark"] .info-banner { background: #1a2a4e; }
+
+/* Holidays list */
+.holiday-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.holiday-item:last-child { border-bottom: none; }
+
+/* Profile Card */
+.profile-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 30px;
+}
+.profile-left { text-align: center; }
+.profile-avatar-lg {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+  color: white;
+  margin: 0 auto 16px;
+}
+.profile-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.profile-detail label { font-size: 11px; color: var(--text-light); display: block; text-transform: uppercase; font-weight: 600; }
+.profile-detail span { font-size: 14px; font-weight: 500; }
+
+/* Print Styles */
+@media print {
+  .sidebar, .header, .filter-bar, .section-header .btn, .no-print { display: none !important; }
+  .main-content { margin: 0 !important; padding: 10px !important; }
+  body { background: white !important; color: black !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .sidebar { width: 70px; }
+  .sidebar-menu li a span { display: none; }
+  .sidebar-menu li a { justify-content: center; padding: 14px; }
+  .sidebar-menu li a i { margin: 0; font-size: 18px; }
+  .main-content { margin-left: 70px; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { transform: translateX(-100%); width: var(--sidebar-width); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar.open + .sidebar-overlay { display: block; }
+  .sidebar-menu li a span { display: inline; }
+  .sidebar-menu li a { justify-content: flex-start; }
+  .main-content { margin-left: 0; }
+  .header-center { display: none; }
+  .user-name, .role-badge { display: none; }
+  .two-panels { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .profile-card { grid-template-columns: 1fr; }
+  .summary-cards { grid-template-columns: 1fr 1fr; }
+  .modal { border-radius: 12px; margin: 10px; }
+}
+@media (max-width: 480px) {
+  .summary-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     LOGIN PAGE
+     ============================================ -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+      <h2 id="loginSchoolName">Sunrise Public School</h2>
+      <p>Student Attendance Management System</p>
+    </div>
+    <form class="login-form" id="loginForm" onsubmit="return handleLogin(event)">
+      <div class="input-group">
+        <i class="fas fa-user field-icon"></i>
+        <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock field-icon"></i>
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <button type="button" class="toggle-pass" onclick="togglePassword()"><i class="fas fa-eye"></i></button>
+      </div>
+      <div class="remember-row">
+        <label><input type="checkbox" id="rememberMe"> Remember Me</label>
+      </div>
+      <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <div class="login-error" id="loginError">
+        <i class="fas fa-exclamation-circle"></i> Wrong Username or Password. Please Try Again.
+      </div>
+      <p class="forgot-hint"><i class="fas fa-info-circle"></i> Default Admin: admin / admin123</p>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================
+     MAIN APP CONTAINER
+     ============================================ -->
+<div id="appContainer">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="header-logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <h3 id="headerSchoolName">Sunrise Public School</h3>
+      </div>
+    </div>
+    <div class="header-center" id="headerDate"></div>
+    <div class="header-right">
+      <div class="user-info">
+        <div class="user-avatar" id="headerAvatar">A</div>
+        <span class="user-name" id="headerUsername">admin</span>
+        <span class="role-badge admin" id="headerRole">Admin</span>
+      </div>
+      <button class="logout-btn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="#" class="active" data-section="dashboard" onclick="navigateTo('dashboard',this)"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+      <li><a href="#" data-section="students" onclick="navigateTo('students',this)"><i class="fas fa-user-graduate"></i><span>Student Management</span></a></li>
+      <li><a href="#" data-section="classes" onclick="navigateTo('classes',this)"><i class="fas fa-school"></i><span>Class & Section</span></a></li>
+      <li><a href="#" data-section="attendance" onclick="navigateTo('attendance',this)"><i class="fas fa-check-circle"></i><span>Mark Attendance</span></a></li>
+      <li><a href="#" data-section="reports" onclick="navigateTo('reports',this)"><i class="fas fa-chart-bar"></i><span>Attendance Reports</span></a></li>
+      <li><a href="#" data-section="holidays" onclick="navigateTo('holidays',this)"><i class="fas fa-calendar-alt"></i><span>Holiday & Calendar</span></a></li>
+      <li id="navUserMgmt"><a href="#" data-section="users" onclick="navigateTo('users',this)"><i class="fas fa-users-cog"></i><span>User Management</span></a></li>
+      <li><a href="#" data-section="settings" onclick="navigateTo('settings',this)"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+    </ul>
+  </nav>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <section class="content-section active" id="sec-dashboard">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-home" style="color:var(--primary)"></i> Dashboard</h2>
+      <div class="summary-cards" id="dashSummaryCards"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:24px;" class="dash-row">
+        <div class="card">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Weekly Attendance Overview</h3>
+          <div class="bar-chart" id="weeklyChart"></div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-bolt" style="color:var(--warning)"></i> Quick Actions</h3>
+          <div class="quick-actions" style="grid-template-columns:1fr 1fr;">
+            <div class="quick-action-btn" onclick="navigateToSection('attendance')"><i class="fas fa-check-circle" style="color:var(--success)"></i><span>Mark Attendance</span></div>
+            <div class="quick-action-btn" onclick="openAddStudentModal()"><i class="fas fa-user-plus" style="color:var(--primary)"></i><span>Add Student</span></div>
+            <div class="quick-action-btn" onclick="navigateToSection('reports')"><i class="fas fa-chart-line" style="color:var(--info)"></i><span>View Reports</span></div>
+            <div class="quick-action-btn" onclick="navigateToSection('holidays')"><i class="fas fa-calendar-plus" style="color:var(--warning)"></i><span>Add Holiday</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="dash-row">
+        <div class="card">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-table" style="color:var(--primary)"></i> Class-wise Attendance Today</h3>
+          <div class="table-container" id="dashClassTable"></div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-history" style="color:var(--info)"></i> Recent Activity</h3>
+          <div class="activity-list" id="activityLog"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Low Attendance Alerts</h3>
+        <div id="lowAttAlerts"></div>
+      </div>
+    </section>
+
+    <!-- ==================== STUDENTS ==================== -->
+    <section class="content-section" id="sec-students">
+      <div class="section-header">
+        <h2><i class="fas fa-user-graduate" style="color:var(--primary)"></i> Student Management</h2>
+        <button class="btn btn-primary" onclick="openAddStudentModal()"><i class="fas fa-plus"></i> Add New Student</button>
+      </div>
+      <div class="filter-bar">
+        <div class="form-group">
+          <input type="text" class="form-control" id="studentSearch" placeholder="Search by Name or Roll..." oninput="renderStudentTable()">
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="studentClassFilter" onchange="updateStudentSectionFilter();renderStudentTable()"><option value="">All Classes</option></select>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="studentSectionFilter" onchange="renderStudentTable()"><option value="">All Sections</option></select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-container" id="studentTableContainer"></div>
+        <div class="pagination" id="studentPagination"></div>
+      </div>
+    </section>
+
+    <!-- ==================== CLASSES ==================== -->
+    <section class="content-section" id="sec-classes">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-school" style="color:var(--primary)"></i> Class & Section Management</h2>
+      <div class="two-panels">
+        <div class="card">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">Manage Classes</h3>
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <input type="text" class="form-control" id="newClassName" placeholder="Class Name (e.g., Class 8)" style="flex:1">
+            <button class="btn btn-primary" onclick="addClass()"><i class="fas fa-plus"></i> Add</button>
+          </div>
+          <div id="classList"></div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">Manage Sections</h3>
+          <div class="form-group">
+            <select class="form-control" id="sectionClassSelect" onchange="renderSections()"><option value="">Select Class</option></select>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <input type="text" class="form-control" id="newSectionName" placeholder="Section Name (e.g., A)" style="flex:1">
+            <button class="btn btn-primary" onclick="addSection()"><i class="fas fa-plus"></i> Add</button>
+          </div>
+          <div id="sectionList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">Summary</h3>
+        <div class="table-container" id="classSummaryTable"></div>
+      </div>
+    </section>
+
+    <!-- ==================== MARK ATTENDANCE ==================== -->
+    <section class="content-section" id="sec-attendance">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-check-circle" style="color:var(--success)"></i> Mark Attendance</h2>
+      <div class="card">
+        <div class="filter-bar">
+          <div class="form-group"><label>Class</label><select class="form-control" id="attClassSelect" onchange="updateAttSections()"><option value="">Select Class</option></select></div>
+          <div class="form-group"><label>Section</label><select class="form-control" id="attSectionSelect"><option value="">Select Section</option></select></div>
+          <div class="form-group"><label>Date</label><input type="date" class="form-control" id="attDate"></div>
+          <div class="form-group" style="align-self:flex-end;"><button class="btn btn-primary" onclick="loadAttendance()"><i class="fas fa-search"></i> Load Students</button></div>
+        </div>
+      </div>
+      <div id="attAlreadyMarked" class="info-banner" style="display:none;"><i class="fas fa-info-circle"></i> <span id="attAlreadyText">Attendance Already Marked For This Class On This Date</span></div>
+      <div id="attStudentList" style="display:none;">
+        <div class="card" style="margin-bottom:12px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-success btn-sm" onclick="markAll('P')"><i class="fas fa-check"></i> Mark All Present</button>
+            <button class="btn btn-danger btn-sm" onclick="markAll('A')"><i class="fas fa-times"></i> Mark All Absent</button>
+            <button class="btn btn-outline btn-sm" onclick="markAll('')"><i class="fas fa-undo"></i> Clear All</button>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="submitAttendance()"><i class="fas fa-save"></i> Submit Attendance</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-container" id="attTable"></div>
+        </div>
+        <div class="att-count-bar" id="attCountBar" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- ==================== REPORTS ==================== -->
+    <section class="content-section" id="sec-reports">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Attendance Reports</h2>
+      <div class="card no-print">
+        <div class="filter-bar">
+          <div class="form-group"><label>Class</label><select class="form-control" id="rptClassSelect" onchange="updateRptSections()"><option value="">All Classes</option></select></div>
+          <div class="form-group"><label>Section</label><select class="form-control" id="rptSectionSelect"><option value="">All Sections</option></select></div>
+          <div class="form-group"><label>From</label><input type="date" class="form-control" id="rptFrom"></div>
+          <div class="form-group"><label>To</label><input type="date" class="form-control" id="rptTo"></div>
+          <div class="form-group" style="align-self:flex-end;"><button class="btn btn-primary" onclick="generateReport()"><i class="fas fa-chart-line"></i> Generate</button></div>
+          <div class="form-group" style="align-self:flex-end;"><button class="btn btn-outline btn-sm" onclick="resetReportFilters()"><i class="fas fa-undo"></i> Reset</button></div>
+        </div>
+      </div>
+      <div id="reportResults" style="display:none;">
+        <div class="summary-cards" id="reportSummaryCards" style="margin-top:16px;"></div>
+        <div class="card">
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:12px;" class="no-print">
+            <button class="btn btn-outline btn-sm" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+            <button class="btn btn-success btn-sm" onclick="downloadCSV()"><i class="fas fa-download"></i> Download CSV</button>
+          </div>
+          <div class="table-container" id="reportTable"></div>
+        </div>
+        <div class="card" style="margin-top:20px;">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Student Monthly Calendar View</h3>
+          <div class="filter-bar no-print">
+            <div class="form-group"><label>Student</label><select class="form-control" id="rptStudentSelect" onchange="renderStudentCalendar()"><option value="">Select Student</option></select></div>
+            <div class="form-group"><label>Month</label><input type="month" class="form-control" id="rptMonth" onchange="renderStudentCalendar()"></div>
+          </div>
+          <div id="studentCalendar"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== HOLIDAYS ==================== -->
+    <section class="content-section" id="sec-holidays">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-calendar-alt" style="color:var(--warning)"></i> Holiday & Calendar</h2>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;" class="dash-row">
+        <div>
+          <div class="calendar" id="holidayCalendar"></div>
+        </div>
+        <div>
+          <div class="card">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-list"></i> All Holidays (<span id="holidayCount">0</span>)</h3>
+            <div id="holidayList" style="max-height:300px;overflow-y:auto;"></div>
+          </div>
+          <div class="card" style="margin-top:16px;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;"><i class="fas fa-clock"></i> Upcoming Holidays</h3>
+            <div id="upcomingHolidays"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== USER MANAGEMENT ==================== -->
+    <section class="content-section" id="sec-users">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-users-cog" style="color:var(--primary)"></i> User Management</h2>
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Add New User</h3>
+        <div class="filter-bar">
+          <div class="form-group"><label>Username</label><input type="text" class="form-control" id="newUserName" placeholder="Username"></div>
+          <div class="form-group"><label>Password</label><input type="password" class="form-control" id="newUserPass" placeholder="Password" oninput="checkNewUserPassStr()"></div>
+          <div class="form-group"><label>Confirm</label><input type="password" class="form-control" id="newUserConfirm" placeholder="Confirm Password"></div>
+          <div class="form-group"><label>Role</label><select class="form-control" id="newUserRole"><option value="teacher">Teacher</option><option value="admin">Admin</option></select></div>
+          <div class="form-group" style="align-self:flex-end;"><button class="btn btn-primary" onclick="addUser()"><i class="fas fa-user-plus"></i> Add User</button></div>
+        </div>
+        <div id="newUserStrength" class="strength-bar" style="width:0;"></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="table-container" id="userTable"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SETTINGS ==================== -->
+    <section class="content-section" id="sec-settings">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;"><i class="fas fa-cog" style="color:var(--gray)"></i> Settings</h2>
+      <div class="card">
+        <div class="settings-section">
+          <h3><i class="fas fa-school"></i> School Information</h3>
+          <div class="form-row">
+            <div class="form-group"><label>School Name</label><input type="text" class="form-control" id="setSchoolName"></div>
+            <div class="form-group"><label>Principal Name</label><input type="text" class="form-control" id="setPrincipal"></div>
+            <div class="form-group"><label>School Address</label><input type="text" class="form-control" id="setAddress"></div>
+            <div class="form-group"><label>Contact Number</label><input type="text" class="form-control" id="setContact"></div>
+            <div class="form-group"><label>School Email</label><input type="email" class="form-control" id="setEmail"></div>
+            <div class="form-group"><label>Logo URL</label><input type="text" class="form-control" id="setLogo" placeholder="Optional image URL"></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveSchoolInfo()"><i class="fas fa-save"></i> Save School Info</button>
+        </div>
+        <div class="settings-section">
+          <h3><i class="fas fa-palette"></i> Appearance</h3>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <span style="font-size:14px;font-weight:600;">Dark Mode</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">Accent Color</label>
+            <div class="color-options">
+              <div class="color-option active" style="background:#1a73e8" data-color="#1a73e8" onclick="setAccentColor(this)"></div>
+              <div class="color-option" style="background:#28a745" data-color="#28a745" onclick="setAccentColor(this)"></div>
+              <div class="color-option" style="background:#8e24aa" data-color="#8e24aa" onclick="setAccentColor(this)"></div>
+              <div class="color-option" style="background:#dc3545" data-color="#dc3545" onclick="setAccentColor(this)"></div>
+              <div class="color-option" style="background:#fd7e14" data-color="#fd7e14" onclick="setAccentColor(this)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3><i class="fas fa-check-circle"></i> Attendance Settings</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Min Attendance Threshold (%)</label><input type="number" class="form-control" id="setThreshold" value="75" min="0" max="100"></div>
+          </div>
+          <div class="form-group">
+            <label>Working Days</label>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;" id="workingDaysChecks">
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="1" checked> Mon</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="2" checked> Tue</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="3" checked> Wed</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="4" checked> Thu</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="5" checked> Fri</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="6"> Sat</label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" value="0"> Sun</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveAttSettings()"><i class="fas fa-save"></i> Save Attendance Settings</button>
+        </div>
+        <div class="settings-section">
+          <h3><i class="fas fa-key"></i> Change Password</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Current Password</label><input type="password" class="form-control" id="setCurrPass"></div>
+            <div class="form-group"><label>New Password</label><input type="password" class="form-control" id="setNewPass" oninput="checkSettingsPassStr()"></div>
+          </div>
+          <div id="settingsPassStrength" class="strength-bar" style="width:0;margin-bottom:12px;"></div>
+          <div class="form-group" style="max-width:300px;"><label>Confirm New Password</label><input type="password" class="form-control" id="setConfirmPass"></div>
+          <button class="btn btn-primary" onclick="changeMyPassword()"><i class="fas fa-lock"></i> Update Password</button>
+        </div>
+        <div class="settings-section">
+          <h3><i class="fas fa-database"></i> Data Management</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <button class="btn btn-outline" onclick="exportData()"><i class="fas fa-download"></i> Export All Data (JSON)</button>
+            <button class="btn btn-outline" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Import Data (JSON)</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+            <button class="btn btn-warning" onclick="clearAttData()"><i class="fas fa-eraser"></i> Clear Attendance Data</button>
+            <button class="btn btn-danger" onclick="resetAllData()"><i class="fas fa-trash"></i> Reset All Data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================================
+     MODALS
+     ============================================ -->
+<!-- Add/Edit Student Modal -->
+<div class="modal-overlay" id="studentModal">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <h3 id="studentModalTitle">Add New Student</h3>
+      <button class="modal-close" onclick="closeModal('studentModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editStudentId">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" class="form-control" id="sName"><div class="form-error" id="err-sName">Name is required</div></div>
+        <div class="form-group"><label>Roll Number *</label><input type="text" class="form-control" id="sRoll"><div class="form-error" id="err-sRoll">Roll number is required</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Class *</label><select class="form-control" id="sClass" onchange="updateStudentFormSections()"><option value="">Select Class</option></select><div class="form-error" id="err-sClass">Class is required</div></div>
+        <div class="form-group"><label>Section *</label><select class="form-control" id="sSection"><option value="">Select Section</option></select><div class="form-error" id="err-sSection">Section is required</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date of Birth *</label><input type="date" class="form-control" id="sDob"><div class="form-error" id="err-sDob">DOB is required</div></div>
+        <div class="form-group"><label>Gender *</label>
+          <div style="display:flex;gap:16px;padding:10px 0;">
+            <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="radio" name="sGender" value="Male"> Male</label>
+            <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="radio" name="sGender" value="Female"> Female</label>
+            <label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="radio" name="sGender" value="Other"> Other</label>
+          </div>
+          <div class="form-error" id="err-sGender">Gender is required</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Parent/Guardian Name *</label><input type="text" class="form-control" id="sParent"><div class="form-error" id="err-sParent">Parent name is required</div></div>
+        <div class="form-group"><label>Contact Number *</label><input type="text" class="form-control" id="sContact" maxlength="10"><div class="form-error" id="err-sContact">Valid 10-digit number required</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Parent Email</label><input type="email" class="form-control" id="sEmail"><div class="form-error" id="err-sEmail">Invalid email format</div></div>
+        <div class="form-group"><label>Blood Group</label><select class="form-control" id="sBlood"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+      </div>
+      <div class="form-group"><label>Home Address</label><textarea class="form-control" id="sAddress" rows="2"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Admission Date</label><input type="date" class="form-control" id="sAdmDate"></div>
+        <div class="form-group"><label>Photo URL</label><input type="text" class="form-control" id="sPhoto" placeholder="Optional"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('studentModal')">Cancel</button>
+      <button class="btn btn-primary" id="studentSaveBtn" onclick="saveStudent()"><i class="fas fa-save"></i> Save Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Student Profile Modal -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal" style="width:750px;">
+    <div class="modal-header">
+      <h3>Student Profile</h3>
+      <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="profileContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+      <button class="btn btn-primary" onclick="closeModal('profileModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmDialog">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon" style="color:var(--warning)"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmText">This action cannot be undone.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmYesBtn" onclick="confirmAction()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Attendance Summary Modal -->
+<div class="modal-overlay" id="attSummaryModal">
+  <div class="modal" style="width:450px;">
+    <div class="modal-header">
+      <h3>Attendance Summary</h3>
+      <button class="modal-close" onclick="closeModal('attSummaryModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="attSummaryContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('attSummaryModal')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmSaveAttendance()"><i class="fas fa-check"></i> Confirm & Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Holiday Add Modal -->
+<div class="modal-overlay" id="holidayModal">
+  <div class="modal" style="width:400px;">
+    <div class="modal-header">
+      <h3 id="holidayModalTitle">Add Holiday</h3>
+      <button class="modal-close" onclick="closeModal('holidayModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Date</label><input type="date" class="form-control" id="holidayDate" readonly></div>
+      <div class="form-group"><label>Holiday Name</label><input type="text" class="form-control" id="holidayName" placeholder="e.g., Republic Day"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('holidayModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveHoliday()"><i class="fas fa-save"></i> Add Holiday</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal" style="width:400px;">
+    <div class="modal-header">
+      <h3 id="editUserTitle">Edit User</h3>
+      <button class="modal-close" onclick="closeModal('editUserModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserUsername">
+      <div class="form-group"><label>Role</label><select class="form-control" id="editUserRole"><option value="admin">Admin</option><option value="teacher">Teacher</option></select></div>
+      <div class="form-group"><label>New Password (leave empty to keep)</label><input type="password" class="form-control" id="editUserPass"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('editUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="updateUser()"><i class="fas fa-save"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+/* ============================================
+   UTILITY FUNCTIONS
+   ============================================ */
+function getLS(key) { try { return JSON.parse(localStorage.getItem(key)); } catch(e) { return null; } }
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function getSS(key) { try { return JSON.parse(sessionStorage.getItem(key)); } catch(e) { return null; } }
+function setSS(key, val) { sessionStorage.setItem(key, JSON.stringify(val)); }
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+function formatDate(d) { if (!d) return ''; const dt = new Date(d); return dt.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}); }
+function formatDateTime(d) { if (!d) return ''; const dt = new Date(d); return dt.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) + ' ' + dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function getDayName(d) { return new Date(d).toLocaleDateString('en-IN',{weekday:'long'}); }
+function getShortDay(d) { return new Date(d).toLocaleDateString('en-IN',{weekday:'short'}); }
+function getAvatarColor(name) {
+  const colors = ['#1a73e8','#8e24aa','#e91e63','#00897b','#ef6c00','#5c6bc0','#43a047','#f4511e'];
+  let h = 0; for(let i=0;i<name.length;i++) h = name.charCodeAt(i)+((h<<5)-h);
+  return colors[Math.abs(h)%colors.length];
+}
+function getInitials(name) { const p = name.split(' '); return p.length > 1 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : name.substring(0,2).toUpperCase(); }
+
+function showToast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast '+type;
+  const icons = {success:'fa-check-circle',error:'fa-times-circle',info:'fa-info-circle',warning:'fa-exclamation-triangle'};
+  t.innerHTML = '<i class="fas '+(icons[type]||icons.success)+'"></i> '+msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(100px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); },3000);
+}
+
+let confirmCallback = null;
+function showConfirm(title, text, btnText, cb, btnClass='btn-danger') {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent = text;
+  document.getElementById('confirmYesBtn').textContent = btnText;
+  document.getElementById('confirmYesBtn').className = 'btn '+btnClass;
+  confirmCallback = cb;
+  document.getElementById('confirmDialog').classList.add('active');
+}
+function confirmAction() { if(confirmCallback) confirmCallback(); closeConfirm(); }
+function closeConfirm() { document.getElementById('confirmDialog').classList.remove('active'); confirmCallback=null; }
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Close modals on overlay click or escape
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    closeConfirm();
+  }
+});
+
+function showLoading(cb) {
+  const lo = document.getElementById('loadingOverlay');
+  lo.classList.add('active');
+  setTimeout(()=>{ lo.classList.remove('active'); if(cb) cb(); }, 400);
+}
+
+/* ============================================
+   SAMPLE DATA INITIALIZATION
+   ============================================ */
+function initSampleData() {
+  if (getLS('sams_initialized')) return;
+
+  // Users
+  const users = [
+    { username:'admin', password:'admin123', role:'admin', created: new Date().toISOString(), lastLogin:'', status:'active' },
+    { username:'teacher1', password:'teacher123', role:'teacher', created: new Date().toISOString(), lastLogin:'', status:'active' },
+    { username:'teacher2', password:'teach456', role:'teacher', created: new Date().toISOString(), lastLogin:'', status:'active' }
+  ];
+  setLS('sams_users', users);
+
+  // School Info
+  setLS('sams_school', { name:'Sunrise Public School', address:'123 Education Lane, New Delhi', principal:'Dr. Rajesh Kumar', contact:'011-2345678', email:'info@sunriseschool.edu', logo:'' });
+
+  // Settings
+  setLS('sams_settings', { threshold:75, workingDays:[1,2,3,4,5], darkMode:false, accentColor:'#1a73e8' });
+
+  // Classes & Sections
+  const classes = [
+    { id:'c1', name:'Class 5', sections:['A','B'] },
+    { id:'c2', name:'Class 6', sections:['A','B','C'] },
+    { id:'c3', name:'Class 7', sections:['A','B'] }
+  ];
+  setLS('sams_classes', classes);
+
+  // Students
+  const sampleStudents = [
+    { id:'s1', name:'Aarav Sharma', roll:'5A01', classId:'c1', section:'A', dob:'2013-03-15', gender:'Male', parent:'Rajesh Sharma', contact:'9876543210', email:'rajesh@email.com', address:'12 MG Road, Delhi', blood:'B+', admDate:'2023-04-01', photo:'' },
+    { id:'s2', name:'Diya Patel', roll:'5A02', classId:'c1', section:'A', dob:'2013-07-22', gender:'Female', parent:'Amit Patel', contact:'9876543211', email:'amit@email.com', address:'45 Nehru Street, Delhi', blood:'A+', admDate:'2023-04-01', photo:'' },
+    { id:'s3', name:'Vivaan Singh', roll:'5A03', classId:'c1', section:'A', dob:'2013-01-10', gender:'Male', parent:'Harpreet Singh', contact:'9876543212', email:'', address:'78 Gandhi Nagar, Delhi', blood:'O+', admDate:'2023-04-01', photo:'' },
+    { id:'s4', name:'Ananya Gupta', roll:'5B01', classId:'c1', section:'B', dob:'2013-11-05', gender:'Female', parent:'Suresh Gupta', contact:'9876543213', email:'suresh@email.com', address:'23 Lajpat Nagar, Delhi', blood:'A-', admDate:'2023-04-01', photo:'' },
+    { id:'s5', name:'Arjun Kumar', roll:'5B02', classId:'c1', section:'B', dob:'2013-05-18', gender:'Male', parent:'Vikram Kumar', contact:'9876543214', email:'', address:'90 Saket, Delhi', blood:'B+', admDate:'2023-04-01', photo:'' },
+    { id:'s6', name:'Ishaan Reddy', roll:'6A01', classId:'c2', section:'A', dob:'2012-09-20', gender:'Male', parent:'Krishna Reddy', contact:'9876543215', email:'krishna@email.com', address:'56 Jubilee Hills, Hyderabad', blood:'O+', admDate:'2023-04-01', photo:'' },
+    { id:'s7', name:'Priya Nair', roll:'6A02', classId:'c2', section:'A', dob:'2012-02-14', gender:'Female', parent:'Sunil Nair', contact:'9876543216', email:'sunil@email.com', address:'34 MG Road, Kochi', blood:'AB+', admDate:'2023-04-01', photo:'' },
+    { id:'s8', name:'Rohan Joshi', roll:'6B01', classId:'c2', section:'B', dob:'2012-06-30', gender:'Male', parent:'Deepak Joshi', contact:'9876543217', email:'', address:'67 Aundh, Pune', blood:'A+', admDate:'2023-04-01', photo:'' },
+    { id:'s9', name:'Kavya Iyer', roll:'6B02', classId:'c2', section:'B', dob:'2012-12-25', gender:'Female', parent:'Ramesh Iyer', contact:'9876543218', email:'ramesh@email.com', address:'12 T Nagar, Chennai', blood:'B-', admDate:'2023-04-01', photo:'' },
+    { id:'s10', name:'Aditya Mishra', roll:'6C01', classId:'c2', section:'C', dob:'2012-04-08', gender:'Male', parent:'Prakash Mishra', contact:'9876543219', email:'', address:'89 Gomti Nagar, Lucknow', blood:'O-', admDate:'2023-04-01', photo:'' },
+    { id:'s11', name:'Sneha Verma', roll:'7A01', classId:'c3', section:'A', dob:'2011-08-12', gender:'Female', parent:'Anil Verma', contact:'9876543220', email:'anil@email.com', address:'45 Civil Lines, Jaipur', blood:'A+', admDate:'2023-04-01', photo:'' },
+    { id:'s12', name:'Karthik Menon', roll:'7A02', classId:'c3', section:'A', dob:'2011-10-03', gender:'Male', parent:'Gopal Menon', contact:'9876543221', email:'', address:'23 Marine Drive, Mumbai', blood:'B+', admDate:'2023-04-01', photo:'' },
+    { id:'s13', name:'Meera Das', roll:'7A03', classId:'c3', section:'A', dob:'2011-01-28', gender:'Female', parent:'Bikas Das', contact:'9876543222', email:'bikas@email.com', address:'78 Salt Lake, Kolkata', blood:'AB-', admDate:'2023-04-01', photo:'' },
+    { id:'s14', name:'Rahul Chauhan', roll:'7B01', classId:'c3', section:'B', dob:'2011-07-17', gender:'Male', parent:'Mohan Chauhan', contact:'9876543223', email:'', address:'56 Vastrapur, Ahmedabad', blood:'O+', admDate:'2023-04-01', photo:'' },
+    { id:'s15', name:'Tanvi Saxena', roll:'7B02', classId:'c3', section:'B', dob:'2011-03-09', gender:'Female', parent:'Ravi Saxena', contact:'9876543224', email:'ravi@email.com', address:'34 Hazratganj, Lucknow', blood:'A-', admDate:'2023-04-01', photo:'' }
+  ];
+  setLS('sams_students', sampleStudents);
+
+  // Holidays
+  const now = new Date();
+  const y = now.getFullYear();
+  const holidays = [
+    { date: y+'-01-26', name: 'Republic Day' },
+    { date: y+'-08-15', name: 'Independence Day' },
+    { date: y+'-10-02', name: 'Gandhi Jayanti' },
+    { date: y+'-11-01', name: 'Diwali' },
+    { date: y+'-12-25', name: 'Christmas' }
+  ];
+  setLS('sams_holidays', holidays);
+
+  // Generate sample attendance for last 30 days
+  const attendance = {};
+  const settings = { threshold:75, workingDays:[1,2,3,4,5] };
+  for (let i = 30; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().split('T')[0];
+    const dow = d.getDay();
+    if (!settings.workingDays.includes(dow)) continue;
+    if (holidays.find(h => h.date === ds)) continue;
+
+    sampleStudents.forEach(st => {
+      const key = ds + '_' + st.classId + '_' + st.section;
+      if (!attendance[key]) attendance[key] = { date: ds, classId: st.classId, section: st.section, records: {}, markedBy:'admin', markedAt: d.toISOString() };
+      // Make some students have low attendance
+      let status = 'P';
+      const rand = Math.random();
+      if (['s3','s10','s14'].includes(st.id)) {
+        status = rand < 0.45 ? 'A' : (rand < 0.55 ? 'L' : 'P');
+      } else {
+        status = rand < 0.08 ? 'A' : (rand < 0.12 ? 'L' : 'P');
+      }
+      attendance[key].records[st.id] = status;
+    });
+  }
+  setLS('sams_attendance', attendance);
+
+  // Activity log
+  const activityLog = [
+    { action:'System initialized with sample data', user:'system', time: new Date().toISOString() },
+    { action:'Admin account created', user:'system', time: new Date().toISOString() },
+    { action:'Sample students added (15 students)', user:'system', time: new Date().toISOString() }
+  ];
+  setLS('sams_activity', activityLog);
+
+  setLS('sams_initialized', true);
+}
+
+function addActivity(action) {
+  const log = getLS('sams_activity') || [];
+  const user = getSS('sams_session');
+  log.unshift({ action, user: user ? user.username : 'system', time: new Date().toISOString() });
+  if (log.length > 50) log.length = 50;
+  setLS('sams_activity', log);
+}
+
+/* ============================================
+   LOGIN SYSTEM
+   ============================================ */
+function handleLogin(e) {
+  e.preventDefault();
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const remember = document.getElementById('rememberMe').checked;
+  const users = getLS('sams_users') || [];
+  const user = users.find(u => u.username === username && u.password === password && u.status !== 'inactive');
+
+  if (!user) {
+    document.getElementById('loginError').classList.add('show');
+    setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
+    return false;
+  }
+
+  // Update last login
+  user.lastLogin = new Date().toISOString();
+  setLS('sams_users', users);
+
+  // Remember
+  if (remember) localStorage.setItem('sams_remember', username);
+  else localStorage.removeItem('sams_remember');
+
+  // Session
+  setSS('sams_session', { username: user.username, role: user.role });
+  addActivity('User ' + user.username + ' logged in');
+  showApp();
+  return false;
+}
+
+function togglePassword() {
+  const inp = document.getElementById('loginPassword');
+  const icon = document.querySelector('.toggle-pass i');
+  if (inp.type === 'password') { inp.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+  else { inp.type = 'password'; icon.className = 'fas fa-eye'; }
+}
+
+function confirmLogout() {
+  showConfirm('Logout', 'Are You Sure You Want To Logout?', 'Yes, Logout', () => {
+    addActivity('User logged out');
+    sessionStorage.removeItem('sams_session');
+    document.getElementById('appContainer').classList.remove('active');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('loginPassword').value = '';
+  }, 'btn-danger');
+}
+
+function checkSession() {
+  const session = getSS('sams_session');
+  if (session) { showApp(); return; }
+  document.getElementById('loginPage').style.display = 'flex';
+  const rem = localStorage.getItem('sams_remember');
+  if (rem) { document.getElementById('loginUsername').value = rem; document.getElementById('rememberMe').checked = true; }
+}
+
+function showApp() {
+  const session = getSS('sams_session');
+  if (!session) return;
+
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appContainer').classList.add('active');
+
+  // Update header
+  const school = getLS('sams_school') || {};
+  document.getElementById('headerSchoolName').textContent = school.name || 'School';
+  document.getElementById('loginSchoolName').textContent = school.name || 'School';
+  document.getElementById('headerAvatar').textContent = session.username[0].toUpperCase();
+  document.getElementById('headerUsername').textContent = session.username;
+  const rb = document.getElementById('headerRole');
+  rb.textContent = session.role.charAt(0).toUpperCase() + session.role.slice(1);
+  rb.className = 'role-badge ' + session.role;
+
+  // Date
+  const now = new Date();
+  document.getElementById('headerDate').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Role-based nav
+  if (session.role !== 'admin') {
+    document.getElementById('navUserMgmt').style.display = 'none';
+  } else {
+    document.getElementById('navUserMgmt').style.display = '';
+  }
+
+  // Load settings
+  loadSettingsUI();
+  navigateTo('dashboard', document.querySelector('[data-section="dashboard"]'));
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+function navigateTo(section, el) {
+  if (el) {
+    el.preventDefault && el.preventDefault();
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    if (el.classList) el.classList.add('active');
+  }
+
+  // Role check
+  const session = getSS('sams_session');
+  if (section === 'users' && session && session.role !== 'admin') { showToast('Access Denied','error'); return; }
+
+  showLoading(() => {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById('sec-' + section);
+    if (sec) sec.classList.add('active');
+
+    // Load section data
+    switch(section) {
+      case 'dashboard': loadDashboard(); break;
+      case 'students': loadStudentsPage(); break;
+      case 'classes': loadClassesPage(); break;
+      case 'attendance': loadAttendancePage(); break;
+      case 'reports': loadReportsPage(); break;
+      case 'holidays': loadHolidaysPage(); break;
+      case 'users': loadUsersPage(); break;
+      case 'settings': loadSettingsPage(); break;
+    }
+  });
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function navigateToSection(section) {
+  const el = document.querySelector('[data-section="'+section+'"]');
+  navigateTo(section, el);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ============================================
+   DASHBOARD
+   ============================================ */
+function loadDashboard() {
+  const students = getLS('sams_students') || [];
+  const classes = getLS('sams_classes') || [];
+  const attendance = getLS('sams_attendance') || {};
+  const settings = getLS('sams_settings') || { threshold: 75 };
+  const today = todayStr();
+
+  // Count today's attendance
+  let presentToday = 0, absentToday = 0, lateToday = 0;
+  Object.keys(attendance).forEach(key => {
+    if (key.startsWith(today)) {
+      const rec = attendance[key].records;
+      Object.values(rec).forEach(s => { if(s==='P') presentToday++; else if(s==='A') absentToday++; else if(s==='L') lateToday++; });
+    }
+  });
+  const totalMarked = presentToday + absentToday + lateToday;
+  const pct = totalMarked > 0 ? Math.round((presentToday+lateToday)/totalMarked*100) : 0;
+
+  // Summary cards
+  document.getElementById('dashSummaryCards').innerHTML = `
+    <div class="summary-card"><div class="sc-icon blue"><i class="fas fa-user-graduate"></i></div><div class="sc-info"><h4>Total Students</h4><div class="sc-value" data-count="${students.length}">0</div></div></div>
+    <div class="summary-card"><div class="sc-icon purple"><i class="fas fa-school"></i></div><div class="sc-info"><h4>Total Classes</h4><div class="sc-value" data-count="${classes.length}">0</div></div></div>
+    <div class="summary-card"><div class="sc-icon green"><i class="fas fa-check-circle"></i></div><div class="sc-info"><h4>Present Today</h4><div class="sc-value" data-count="${presentToday}">0</div></div></div>
+    <div class="summary-card"><div class="sc-icon red"><i class="fas fa-times-circle"></i></div><div class="sc-info"><h4>Absent Today</h4><div class="sc-value" data-count="${absentToday}">0</div></div></div>
+    <div class="summary-card"><div class="sc-icon orange"><i class="fas fa-percentage"></i></div><div class="sc-info"><h4>Attendance %</h4><div class="sc-value" data-count="${pct}">0%</div></div></div>
+  `;
+
+  // Animate count up
+  document.querySelectorAll('.sc-value[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    let current = 0;
+    const isPercent = el.closest('.summary-card').querySelector('.sc-icon').classList.contains('orange');
+    const step = Math.max(1, Math.ceil(target / 30));
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(interval); }
+      el.textContent = current + (isPercent ? '%' : '');
+    }, 30);
+  });
+
+  // Weekly chart
+  const chartEl = document.getElementById('weeklyChart');
+  chartEl.innerHTML = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().split('T')[0];
+    let p = 0, t = 0;
+    Object.keys(attendance).forEach(key => {
+      if (key.startsWith(ds)) {
+        const rec = attendance[key].records;
+        Object.values(rec).forEach(s => { t++; if(s==='P'||s==='L') p++; });
+      }
+    });
+    const pctDay = t > 0 ? Math.round(p/t*100) : 0;
+    const color = pctDay >= 75 ? 'var(--success)' : pctDay >= 50 ? 'var(--warning)' : 'var(--danger)';
+    chartEl.innerHTML += `<div class="bar-item"><div class="bar-value" style="color:${color}">${pctDay}%</div><div class="bar" style="height:${Math.max(4, pctDay*1.5)}px;background:${color};width:35px;"></div><div class="bar-label">${getShortDay(ds)}</div></div>`;
+  }
+
+  // Class-wise table
+  let classTableHtml = '<table><thead><tr><th>Class</th><th>Section</th><th>Students</th><th>Present</th><th>Absent</th><th>%</th></tr></thead><tbody>';
+  classes.forEach(cls => {
+    cls.sections.forEach(sec => {
+      const clsStudents = students.filter(s => s.classId === cls.id && s.section === sec);
+      let cp=0,ca=0,cl=0;
+      const key = today+'_'+cls.id+'_'+sec;
+      if (attendance[key]) {
+        Object.values(attendance[key].records).forEach(s => { if(s==='P') cp++; else if(s==='A') ca++; else cl++; });
+      }
+      const ct = cp+ca+cl;
+      const cpct = ct > 0 ? Math.round((cp+cl)/ct*100) : 0;
+      const pctClass = cpct >= 75 ? 'badge-success' : cpct >= 60 ? 'badge-warning' : 'badge-danger';
+      classTableHtml += `<tr><td>${cls.name}</td><td>${sec}</td><td>${clsStudents.length}</td><td>${cp}</td><td>${ca}</td><td><span class="badge ${pctClass}">${cpct}%</span></td></tr>`;
+    });
+  });
+  classTableHtml += '</tbody></table>';
+  document.getElementById('dashClassTable').innerHTML = classTableHtml;
+
+  // Activity log
+  const actLog = getLS('sams_activity') || [];
+  const alEl = document.getElementById('activityLog');
+  alEl.innerHTML = actLog.slice(0,10).map(a => `
+    <div class="activity-item">
+      <div class="act-icon"><i class="fas fa-history"></i></div>
+      <div><div class="act-text">${a.action}</div><div class="act-time">by ${a.user} on ${formatDateTime(a.time)}</div></div>
+    </div>
+  `).join('') || '<p style="color:var(--text-light);font-size:13px;">No recent activity</p>';
+
+  // Low attendance alerts
+  const threshold = settings.threshold || 75;
+  const alertEl = document.getElementById('lowAttAlerts');
+  const lowStudents = [];
+  students.forEach(st => {
+    const stats = getStudentAttStats(st.id);
+    if (stats.total > 0 && stats.pct < threshold) {
+      const cls = classes.find(c => c.id === st.classId);
+      lowStudents.push({ name: st.name, class: cls ? cls.name : '', section: st.section, pct: stats.pct });
+    }
+  });
+  if (lowStudents.length > 0) {
+    alertEl.innerHTML = lowStudents.map(s => `
+      <div class="alert-card">
+        <i class="fas fa-exclamation-triangle" style="color:var(--danger);font-size:18px;"></i>
+        <div><strong>${s.name}</strong> (${s.class} - ${s.section}) — <span style="color:var(--danger);font-weight:700;">${s.pct}%</span> Attendance</div>
+      </div>
+    `).join('');
+  } else {
+    alertEl.innerHTML = '<div class="alert-good"><i class="fas fa-check-circle"></i> All Students Have Good Attendance</div>';
+  }
+}
+
+function getStudentAttStats(studentId, fromDate, toDate) {
+  const attendance = getLS('sams_attendance') || {};
+  const settings = getLS('sams_settings') || { workingDays:[1,2,3,4,5] };
+  const holidays = getLS('sams_holidays') || [];
+  let present=0, absent=0, late=0, total=0;
+
+  Object.keys(attendance).forEach(key => {
+    const rec = attendance[key];
+    if (rec.records[studentId] !== undefined) {
+      const d = new Date(rec.date);
+      if (fromDate && rec.date < fromDate) return;
+      if (toDate && rec.date > toDate) return;
+      total++;
+      const s = rec.records[studentId];
+      if (s==='P') present++;
+      else if (s==='A') absent++;
+      else if (s==='L') late++;
+    }
+  });
+
+  const pct = total > 0 ? Math.round((present+late)/total*100) : 0;
+  return { present, absent, late, total, pct };
+}
+
+/* ============================================
+   STUDENT MANAGEMENT
+   ============================================ */
+let studentPage = 1;
+const STUDENTS_PER_PAGE = 10;
+
+function loadStudentsPage() {
+  const classes = getLS('sams_classes') || [];
+  // Populate filters
+  const cf = document.getElementById('studentClassFilter');
+  cf.innerHTML = '<option value="">All Classes</option>' + classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  populateClassDropdowns();
+  renderStudentTable();
+}
+
+function updateStudentSectionFilter() {
+  const classId = document.getElementById('studentClassFilter').value;
+  const classes = getLS('sams_classes') || [];
+  const sf = document.getElementById('studentSectionFilter');
+  sf.innerHTML = '<option value="">All Sections</option>';
+  if (classId) {
+    const cls = classes.find(c => c.id === classId);
+    if (cls) cls.sections.forEach(s => sf.innerHTML += `<option value="${s}">${s}</option>`);
+  }
+}
+
+function renderStudentTable() {
+  const students = getLS('sams_students') || [];
+  const classes = getLS('sams_classes') || [];
+  const search = (document.getElementById('studentSearch').value||'').toLowerCase();
+  const classFilter = document.getElementById('studentClassFilter').value;
+  const sectionFilter = document.getElementById('studentSectionFilter').value;
+
+  let filtered = students.filter(s => {
+    if (search && !s.name.toLowerCase().includes(search) && !s.roll.toLowerCase().includes(search)) return false;
+    if (classFilter && s.classId !== classFilter) return false;
+    if (sectionFilter && s.section !== sectionFilter) return false;
+    return true;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / STUDENTS_PER_PAGE));
+  if (studentPage > totalPages) studentPage = totalPages;
+  const start = (studentPage - 1) * STUDENTS_PER_PAGE;
+  const pageStudents = filtered.slice(start, start + STUDENTS_PER_PAGE);
+
+  let html = '<table><thead><tr><th>#</th><th></th><th>Roll</th><th>Name</th><th>Class</th><th>Gender</th><th>Parent</th><th>Contact</th><th>Att%</th><th>Actions</th></tr></thead><tbody>';
+  pageStudents.forEach((s, i) => {
+    const cls = classes.find(c => c.id === s.classId);
+    const stats = getStudentAttStats(s.id);
+    const pctClass = stats.pct >= 75 ? 'badge-success' : stats.pct >= 60 ? 'badge-warning' : 'badge-danger';
+    const color = getAvatarColor(s.name);
+    html += `<tr>
+      <td>${start+i+1}</td>
+      <td><div class="student-avatar" style="background:${color}">${getInitials(s.name)}</div></td>
+      <td>${s.roll}</td>
+      <td><strong>${s.name}</strong></td>
+      <td>${cls?cls.name:''} - ${s.section}</td>
+      <td>${s.gender}</td>
+      <td>${s.parent}</td>
+      <td>${s.contact}</td>
+      <td><span class="badge ${pctClass}">${stats.pct}%</span></td>
+      <td>
+        <button class="btn-icon" style="background:var(--primary-light);color:var(--primary);" onclick="viewStudent('${s.id}')" title="View"><i class="fas fa-eye"></i></button>
+        <button class="btn-icon" style="background:#e8f5e9;color:var(--success);" onclick="editStudent('${s.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon" style="background:#fde8e8;color:var(--danger);" onclick="deleteStudent('${s.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('studentTableContainer').innerHTML = html;
+
+  // Pagination
+  let pagHtml = `<div class="page-info">Showing ${filtered.length?start+1:0} to ${Math.min(start+STUDENTS_PER_PAGE, filtered.length)} of ${filtered.length} Students</div><div class="page-btns">`;
+  pagHtml += `<button class="page-btn" onclick="studentPage--;renderStudentTable();" ${studentPage<=1?'disabled':''}>Previous</button>`;
+  for (let p = 1; p <= totalPages; p++) {
+    pagHtml += `<button class="page-btn ${p===studentPage?'active':''}" onclick="studentPage=${p};renderStudentTable();">${p}</button>`;
+  }
+  pagHtml += `<button class="page-btn" onclick="studentPage++;renderStudentTable();" ${studentPage>=totalPages?'disabled':''}>Next</button></div>`;
+  document.getElementById('studentPagination').innerHTML = pagHtml;
+}
+
+function populateClassDropdowns() {
+  const classes = getLS('sams_classes') || [];
+  const dropdowns = ['sClass','attClassSelect','rptClassSelect','sectionClassSelect'];
+  dropdowns.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const currentVal = el.value;
+    const firstOpt = el.querySelector('option')?.textContent || 'Select Class';
+    el.innerHTML = `<option value="">${firstOpt}</option>` + classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    if (currentVal) el.value = currentVal;
+  });
+}
+
+function updateStudentFormSections() {
+  const classId = document.getElementById('sClass').value;
+  const classes = getLS('sams_classes') || [];
+  const sf = document.getElementById('sSection');
+  sf.innerHTML = '<option value="">Select Section</option>';
+  if (classId) {
+    const cls = classes.find(c => c.id === classId);
+    if (cls) cls.sections.forEach(s => sf.innerHTML += `<option value="${s}">${s}</option>`);
+  }
+}
+
+function openAddStudentModal() {
+  document.getElementById('studentModalTitle').textContent = 'Add New Student';
+  document.getElementById('editStudentId').value = '';
+  document.getElementById('studentSaveBtn').innerHTML = '<i class="fas fa-save"></i> Save Student';
+  // Clear form
+  ['sName','sRoll','sDob','sParent','sContact','sEmail','sAddress','sAdmDate','sPhoto'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('sClass').value = '';
+  document.getElementById('sSection').innerHTML = '<option value="">Select Section</option>';
+  document.getElementById('sBlood').value = '';
+  document.querySelectorAll('[name="sGender"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+  populateClassDropdowns();
+  openModal('studentModal');
+}
+
+function editStudent(id) {
+  const students = getLS('sams_students') || [];
+  const s = students.find(st => st.id === id);
+  if (!s) return;
+  document.getElementById('studentModalTitle').textContent = 'Edit Student';
+  document.getElementById('editStudentId').value = id;
+  document.getElementById('studentSaveBtn').innerHTML = '<i class="fas fa-save"></i> Update Student';
+  populateClassDropdowns();
+  document.getElementById('sName').value = s.name;
+  document.getElementById('sRoll').value = s.roll;
+  document.getElementById('sClass').value = s.classId;
+  updateStudentFormSections();
+  setTimeout(() => document.getElementById('sSection').value = s.section, 50);
+  document.getElementById('sDob').value = s.dob;
+  document.querySelectorAll('[name="sGender"]').forEach(r => r.checked = r.value === s.gender);
+  document.getElementById('sParent').value = s.parent;
+  document.getElementById('sContact').value = s.contact;
+  document.getElementById('sEmail').value = s.email || '';
+  document.getElementById('sAddress').value = s.address || '';
+  document.getElementById('sBlood').value = s.blood || '';
+  document.getElementById('sAdmDate').value = s.admDate || '';
+  document.getElementById('sPhoto').value = s.photo || '';
+  document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+  openModal('studentModal');
+}
+
+function saveStudent() {
+  // Validate
+  let valid = true;
+  const fields = [
+    { id:'sName', err:'err-sName' },
+    { id:'sRoll', err:'err-sRoll' },
+    { id:'sClass', err:'err-sClass' },
+    { id:'sSection', err:'err-sSection' },
+    { id:'sDob', err:'err-sDob' },
+    { id:'sParent', err:'err-sParent' }
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const errEl = document.getElementById(f.err);
+    if (!el.value.trim()) { errEl.classList.add('show'); valid = false; }
+    else errEl.classList.remove('show');
+  });
+
+  // Gender
+  const gender = document.querySelector('[name="sGender"]:checked');
+  if (!gender) { document.getElementById('err-sGender').classList.add('show'); valid = false; }
+  else document.getElementById('err-sGender').classList.remove('show');
+
+  // Contact
+  const contact = document.getElementById('sContact').value.trim();
+  if (!contact || !/^\d{10}$/.test(contact)) { document.getElementById('err-sContact').classList.add('show'); valid = false; }
+  else document.getElementById('err-sContact').classList.remove('show');
+
+  // Email (optional)
+  const email = document.getElementById('sEmail').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('err-sEmail').classList.add('show'); valid = false; }
+  else document.getElementById('err-sEmail').classList.remove('show');
+
+  // Roll uniqueness
+  const editId = document.getElementById('editStudentId').value;
+  const students = getLS('sams_students') || [];
+  const roll = document.getElementById('sRoll').value.trim();
+  if (students.find(s => s.roll === roll && s.id !== editId)) {
+    document.getElementById('err-sRoll').textContent = 'Roll number already exists';
+    document.getElementById('err-sRoll').classList.add('show');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  const studentData = {
+    name: document.getElementById('sName').value.trim(),
+    roll,
+    classId: document.getElementById('sClass').value,
+    section: document.getElementById('sSection').value,
+    dob: document.getElementById('sDob').value,
+    gender: gender.value,
+    parent: document.getElementById('sParent').value.trim(),
+    contact,
+    email,
+    address: document.getElementById('sAddress').value.trim(),
+    blood: document.getElementById('sBlood').value,
+    admDate: document.getElementById('sAdmDate').value,
+    photo: document.getElementById('sPhoto').value.trim()
+  };
+
+  if (editId) {
+    const idx = students.findIndex(s => s.id === editId);
+    if (idx >= 0) { students[idx] = { ...students[idx], ...studentData }; }
+    addActivity('Student updated: ' + studentData.name);
+    showToast('Student updated successfully');
+  } else {
+    studentData.id = genId();
+    students.push(studentData);
+    addActivity('New student added: ' + studentData.name);
+    showToast('Student added successfully');
+  }
+  setLS('sams_students', students);
+  closeModal('studentModal');
+  renderStudentTable();
+}
+
+function deleteStudent(id) {
+  const session = getSS('sams_session');
+  if (session && session.role !== 'admin') { showToast('Only Admin can delete students','error'); return; }
+  const students = getLS('sams_students') || [];
+  const s = students.find(st => st.id === id);
+  showConfirm('Delete Student', `Are You Sure You Want To Delete ${s?s.name:'this student'}? All Attendance Records Will Also Be Lost.`, 'Yes, Delete', () => {
+    const filtered = students.filter(st => st.id !== id);
+    setLS('sams_students', filtered);
+    // Remove from attendance
+    const att = getLS('sams_attendance') || {};
+    Object.keys(att).forEach(key => { delete att[key].records[id]; });
+    setLS('sams_attendance', att);
+    addActivity('Student deleted: ' + (s?s.name:''));
+    showToast('Student deleted','warning');
+    renderStudentTable();
+  });
+}
+
+function viewStudent(id) {
+  const students = getLS('sams_students') || [];
+  const classes = getLS('sams_classes') || [];
+  const s = students.find(st => st.id === id);
+  if (!s) return;
+  const cls = classes.find(c => c.id === s.classId);
+  const stats = getStudentAttStats(s.id);
+  const color = getAvatarColor(s.name);
+  const pctColor = stats.pct >= 75 ? 'var(--success)' : stats.pct >= 60 ? 'var(--warning)' : 'var(--danger)';
+
+  // Build monthly calendar for current month
+  const now = new Date();
+  const calHtml = buildStudentMiniCalendar(s.id, now.getFullYear(), now.getMonth());
+
+  document.getElementById('profileContent').innerHTML = `
+    <div class="profile-card">
+      <div class="profile-left">
+        <div class="profile-avatar-lg" style="background:${color}">${getInitials(s.name)}</div>
+        <h3 style="font-size:18px;font-weight:700;">${s.name}</h3>
+        <p style="font-size:13px;color:var(--text-light);">${cls?cls.name:''} - ${s.section}</p>
+        <p style="font-size:12px;color:var(--text-light);">Roll: ${s.roll}</p>
+        <div style="margin-top:16px;">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="35" fill="none" stroke="var(--gray-light)" stroke-width="6"/>
+            <circle cx="40" cy="40" r="35" fill="none" stroke="${pctColor}" stroke-width="6" stroke-dasharray="${stats.pct*2.2} 220" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+            <text x="40" y="44" text-anchor="middle" font-size="14" font-weight="700" fill="${pctColor}">${stats.pct}%</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="profile-details">
+          <div class="profile-detail"><label>Gender</label><span>${s.gender}</span></div>
+          <div class="profile-detail"><label>Date of Birth</label><span>${formatDate(s.dob)}</span></div>
+          <div class="profile-detail"><label>Parent Name</label><span>${s.parent}</span></div>
+          <div class="profile-detail"><label>Contact</label><span>${s.contact}</span></div>
+          <div class="profile-detail"><label>Email</label><span>${s.email||'N/A'}</span></div>
+          <div class="profile-detail"><label>Blood Group</label><span>${s.blood||'N/A'}</span></div>
+          <div class="profile-detail"><label>Address</label><span>${s.address||'N/A'}</span></div>
+          <div class="profile-detail"><label>Admission Date</label><span>${formatDate(s.admDate)}</span></div>
+          <div class="profile-detail"><label>Total Days</label><span>${stats.total}</span></div>
+          <div class="profile-detail"><label>Present</label><span style="color:var(--success)">${stats.present}</span></div>
+          <div class="profile-detail"><label>Absent</label><span style="color:var(--danger)">${stats.absent}</span></div>
+          <div class="profile-detail"><label>Late</label><span style="color:var(--warning)">${stats.late}</span></div>
+        </div>
+        <div style="margin-top:20px;">
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">This Month</h4>
+          ${calHtml}
+        </div>
+      </div>
+    </div>
+  `;
+  openModal('profileModal');
+}
+
+function buildStudentMiniCalendar(studentId, year, month) {
+  const attendance = getLS('sams_attendance') || {};
+  const holidays = getLS('sams_holidays') || [];
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = todayStr();
+
+  let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:11px;">';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => html += `<div style="text-align:center;font-weight:700;padding:4px;color:var(--text-light);">${d}</div>`);
+
+  for (let i = 0; i < firstDay; i++) html += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow = new Date(year, month, d).getDay();
+    const isHoliday = holidays.find(h => h.date === ds);
+    const isWeekend = dow === 0 || dow === 6;
+
+    let status = '', bg = 'var(--card-bg)', color = 'var(--text)', label = d;
+    // Find attendance
+    Object.keys(attendance).forEach(key => {
+      if (key.startsWith(ds) && attendance[key].records[studentId]) {
+        status = attendance[key].records[studentId];
+      }
+    });
+
+    if (isHoliday) { bg = '#fde8e8'; color = 'var(--danger)'; label = d + '<br>H'; }
+    else if (status === 'P') { bg = '#e8f5e9'; color = 'var(--success)'; label = d + '<br>P'; }
+    else if (status === 'A') { bg = '#fde8e8'; color = 'var(--danger)'; label = d + '<br>A'; }
+    else if (status === 'L') { bg = '#fff3e0'; color = 'var(--warning)'; label = d + '<br>L'; }
+    else if (isWeekend) { bg = '#f5f5f5'; }
+
+    html += `<div style="text-align:center;padding:4px;background:${bg};color:${color};border-radius:4px;${ds===today?'border:2px solid var(--primary);font-weight:700;':''}">${label}</div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ============================================
+   CLASS & SECTION MANAGEMENT
+   ============================================ */
+function loadClassesPage() {
+  renderClasses();
+  populateClassDropdowns();
+  renderClassSummary();
+}
+
+function renderClasses() {
+  const classes = getLS('sams_classes') || [];
+  const students = getLS('sams_students') || [];
+  const el = document.getElementById('classList');
+  el.innerHTML = classes.map(c => {
+    const count = students.filter(s => s.classId === c.id).length;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;">
+      <div><strong>${c.name}</strong> <span style="font-size:12px;color:var(--text-light);">(${count} students)</span></div>
+      <div>
+        <button class="btn-icon" style="background:#e8f5e9;color:var(--success);" onclick="editClass('${c.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon" style="background:#fde8e8;color:var(--danger);" onclick="deleteClass('${c.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-light);font-size:13px;">No classes added yet</p>';
+  // Update section class dropdown
+  const scd = document.getElementById('sectionClassSelect');
+  scd.innerHTML = '<option value="">Select Class</option>' + classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+function addClass() {
+  const name = document.getElementById('newClassName').value.trim();
+  if (!name) { showToast('Please enter class name','error'); return; }
+  const classes = getLS('sams_classes') || [];
+  if (classes.find(c => c.name.toLowerCase() === name.toLowerCase())) { showToast('Class already exists','error'); return; }
+  classes.push({ id: genId(), name, sections: [] });
+  setLS('sams_classes', classes);
+  document.getElementById('newClassName').value = '';
+  addActivity('Class added: ' + name);
+  showToast('Class added successfully');
+  loadClassesPage();
+}
+
+function editClass(id) {
+  const classes = getLS('sams_classes') || [];
+  const cls = classes.find(c => c.id === id);
+  if (!cls) return;
+  const newName = prompt('Rename class:', cls.name);
+  if (newName && newName.trim()) {
+    cls.name = newName.trim();
+    setLS('sams_classes', classes);
+    addActivity('Class renamed to: ' + cls.name);
+    showToast('Class renamed');
+    loadClassesPage();
+  }
+}
+
+function deleteClass(id) {
+  const session = getSS('sams_session');
+  if (session && session.role !== 'admin') { showToast('Only Admin can delete classes','error'); return; }
+  showConfirm('Delete Class', 'Deleting this class will also remove its sections and students. Continue?', 'Yes, Delete', () => {
+    let classes = getLS('sams_classes') || [];
+    classes = classes.filter(c => c.id !== id);
+    setLS('sams_classes', classes);
+    let students = getLS('sams_students') || [];
+    students = students.filter(s => s.classId !== id);
+    setLS('sams_students', students);
+    addActivity('Class deleted');
+    showToast('Class deleted','warning');
+    loadClassesPage();
+  });
+}
+
+function renderSections() {
+  const classId = document.getElementById('sectionClassSelect').value;
+  const classes = getLS('sams_classes') || [];
+  const el = document.getElementById('sectionList');
+  if (!classId) { el.innerHTML = ''; return; }
+  const cls = classes.find(c => c.id === classId);
+  if (!cls) { el.innerHTML = ''; return; }
+  el.innerHTML = cls.sections.map(s => `
+    <span class="badge badge-info" style="font-size:13px;padding:8px 16px;display:inline-flex;align-items:center;gap:8px;">
+      ${s} <button style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:14px;" onclick="deleteSection('${classId}','${s}')">&times;</button>
+    </span>
+  `).join('') || '<p style="font-size:13px;color:var(--text-light);">No sections</p>';
+}
+
+function addSection() {
+  const classId = document.getElementById('sectionClassSelect').value;
+  if (!classId) { showToast('Please select a class first','error'); return; }
+  const name = document.getElementById('newSectionName').value.trim().toUpperCase();
+  if (!name) { showToast('Please enter section name','error'); return; }
+  const classes = getLS('sams_classes') || [];
+  const cls = classes.find(c => c.id === classId);
+  if (!cls) return;
+  if (cls.sections.includes(name)) { showToast('Section already exists','error'); return; }
+  cls.sections.push(name);
+  setLS('sams_classes', classes);
+  document.getElementById('newSectionName').value = '';
+  addActivity('Section added: ' + name + ' in ' + cls.name);
+  showToast('Section added');
+  renderSections();
+  renderClassSummary();
+}
+
+function deleteSection(classId, section) {
+  showConfirm('Delete Section', `Delete section ${section}?`, 'Yes, Delete', () => {
+    const classes = getLS('sams_classes') || [];
+    const cls = classes.find(c => c.id === classId);
+    if (cls) cls.sections = cls.sections.filter(s => s !== section);
+    setLS('sams_classes', classes);
+    showToast('Section deleted','warning');
+    renderSections();
+    renderClassSummary();
+  });
+}
+
+function renderClassSummary() {
+  const classes = getLS('sams_classes') || [];
+  const students = getLS('sams_students') || [];
+  let html = '<table><thead><tr><th>Class</th><th>Sections</th><th>Total Students</th></tr></thead><tbody>';
+  classes.forEach(c => {
+    const count = students.filter(s => s.classId === c.id).length;
+    html += `<tr><td>${c.name}</td><td>${c.sections.join(', ')||'None'}</td><td>${count}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('classSummaryTable').innerHTML = html;
+}
+
+/* ============================================
+   MARK ATTENDANCE
+   ============================================ */
+let currentAttData = [];
+let attEditMode = false;
+
+function loadAttendancePage() {
+  populateClassDropdowns();
+  document.getElementById('attDate').value = todayStr();
+  document.getElementById('attStudentList').style.display = 'none';
+  document.getElementById('attAlreadyMarked').style.display = 'none';
+}
+
+function updateAttSections() {
+  const classId = document.getElementById('attClassSelect').value;
+  const classes = getLS('sams_classes') || [];
+  const sf = document.getElementById('attSectionSelect');
+  sf.innerHTML = '<option value="">Select Section</option>';
+  if (classId) {
+    const cls = classes.find(c => c.id === classId);
+    if (cls) cls.sections.forEach(s => sf.innerHTML += `<option value="${s}">${s}</option>`);
+  }
+}
+
+function loadAttendance() {
+  const classId = document.getElementById('attClassSelect').value;
+  const section = document.getElementById('attSectionSelect').value;
+  const date = document.getElementById('attDate').value;
+  if (!classId || !section || !date) { showToast('Please select class, section and date','error'); return; }
+
+  const students = getLS('sams_students') || [];
+  const attendance = getLS('sams_attendance') || {};
+  const key = date + '_' + classId + '_' + section;
+  const clsStudents = students.filter(s => s.classId === classId && s.section === section);
+
+  if (clsStudents.length === 0) { showToast('No students in this class/section','warning'); return; }
+
+  currentAttData = clsStudents.map(s => ({
+    id: s.id, name: s.name, roll: s.roll, status: 'P'
+  }));
+
+  // Check if already marked
+  attEditMode = false;
+  if (attendance[key]) {
+    document.getElementById('attAlreadyMarked').style.display = 'flex';
+    document.getElementById('attAlreadyText').textContent = 'Attendance Already Marked For This Class On This Date. You can edit and update.';
+    currentAttData.forEach(s => {
+      if (attendance[key].records[s.id]) s.status = attendance[key].records[s.id];
+    });
+    attEditMode = true;
+  } else {
+    document.getElementById('attAlreadyMarked').style.display = 'none';
+  }
+
+  renderAttList();
+  document.getElementById('attStudentList').style.display = 'block';
+}
+
+function renderAttList() {
+  let html = '<table><thead><tr><th>#</th><th></th><th>Name</th><th>Roll</th><th>Status</th></tr></thead><tbody>';
+  currentAttData.forEach((s, i) => {
+    const color = getAvatarColor(s.name);
+    html += `<tr>
+      <td>${i+1}</td>
+      <td><div class="student-avatar" style="background:${color}">${getInitials(s.name)}</div></td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.roll}</td>
+      <td>
+        <button class="att-btn present ${s.status==='P'?'active':''}" onclick="setAttStatus(${i},'P')">Present</button>
+        <button class="att-btn absent ${s.status==='A'?'active':''}" onclick="setAttStatus(${i},'A')">Absent</button>
+        <button class="att-btn late ${s.status==='L'?'active':''}" onclick="setAttStatus(${i},'L')">Late</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('attTable').innerHTML = html;
+  updateAttCount();
+}
+
+function setAttStatus(idx, status) {
+  currentAttData[idx].status = status;
+  renderAttList();
+}
+
+function markAll(status) {
+  currentAttData.forEach(s => s.status = status || '');
+  renderAttList();
+}
+
+function updateAttCount() {
+  const p = currentAttData.filter(s=>s.status==='P').length;
+  const a = currentAttData.filter(s=>s.status==='A').length;
+  const l = currentAttData.filter(s=>s.status==='L').length;
+  const total = currentAttData.length;
+  const pct = total > 0 ? Math.round((p+l)/total*100) : 0;
+  document.getElementById('attCountBar').innerHTML = `
+    <div class="att-count-item"><div class="count-val" style="color:var(--primary)">${total}</div><div class="count-label">Total</div></div>
+    <div class="att-count-item"><div class="count-val" style="color:var(--success)">${p}</div><div class="count-label">Present</div></div>
+    <div class="att-count-item"><div class="count-val" style="color:var(--danger)">${a}</div><div class="count-label">Absent</div></div>
+    <div class="att-count-item"><div class="count-val" style="color:var(--warning)">${l}</div><div class="count-label">Late</div></div>
+    <div class="att-count-item"><div class="count-val" style="color:var(--primary)">${pct}%</div><div class="count-label">Percentage</div></div>
+  `;
+}
+
+function submitAttendance() {
+  if (currentAttData.some(s => !s.status)) { showToast('Please mark status for all students','error'); return; }
+  const classId = document.getElementById('attClassSelect').value;
+  const section = document.getElementById('attSectionSelect').value;
+  const date = document.getElementById('attDate').value;
+  const classes = getLS('sams_classes') || [];
+  const cls = classes.find(c => c.id === classId);
+  const p = currentAttData.filter(s=>s.status==='P').length;
+  const a = currentAttData.filter(s=>s.status==='A').length;
+  const l = currentAttData.filter(s=>s.status==='L').length;
+
+  document.getElementById('attSummaryContent').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <p style="font-size:14px;margin-bottom:4px;"><strong>${cls?cls.name:''} - ${section}</strong></p>
+      <p style="font-size:13px;color:var(--text-light);">${formatDate(date)}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+      <div style="padding:12px;background:var(--primary-light);border-radius:8px;"><div style="font-size:22px;font-weight:700;">${currentAttData.length}</div><div style="font-size:11px;color:var(--text-light);">Total</div></div>
+      <div style="padding:12px;background:#e8f5e9;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--success);">${p}</div><div style="font-size:11px;color:var(--text-light);">Present</div></div>
+      <div style="padding:12px;background:#fde8e8;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--danger);">${a}</div><div style="font-size:11px;color:var(--text-light);">Absent</div></div>
+      <div style="padding:12px;background:#fff3e0;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--warning);">${l}</div><div style="font-size:11px;color:var(--text-light);">Late</div></div>
+    </div>
+  `;
+  openModal('attSummaryModal');
+}
+
+function confirmSaveAttendance() {
+  const classId = document.getElementById('attClassSelect').value;
+  const section = document.getElementById('attSectionSelect').value;
+  const date = document.getElementById('attDate').value;
+  const attendance = getLS('sams_attendance') || {};
+  const key = date + '_' + classId + '_' + section;
+  const session = getSS('sams_session');
+
+  const records = {};
+  currentAttData.forEach(s => records[s.id] = s.status);
+
+  attendance[key] = {
+    date, classId, section, records,
+    markedBy: session ? session.username : 'unknown',
+    markedAt: new Date().toISOString()
+  };
+  setLS('sams_attendance', attendance);
+
+  const classes = getLS('sams_classes') || [];
+  const cls = classes.find(c => c.id === classId);
+  addActivity(`Attendance ${attEditMode?'updated':'marked'} for ${cls?cls.name:''}-${section} on ${formatDate(date)}`);
+
+  closeModal('attSummaryModal');
+  showToast(`Attendance ${attEditMode?'updated':'saved'} successfully!`);
+  document.getElementById('attAlreadyMarked').style.display = 'flex';
+  document.getElementById('attAlreadyText').textContent = 'Attendance saved successfully for this date.';
+  attEditMode = true;
+}
+
+/* ============================================
+   REPORTS
+   ============================================ */
+function loadReportsPage() {
+  populateClassDropdowns();
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), 1);
+  document.getElementById('rptFrom').value = from.toISOString().split('T')[0];
+  document.getElementById('rptTo').value = todayStr();
+  document.getElementById('rptMonth').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('reportResults').style.display = 'none';
+}
+
+function updateRptSections() {
+  const classId = document.getElementById('rptClassSelect').value;
+  const classes = getLS('sams_classes') || [];
+  const sf = document.getElementById('rptSectionSelect');
+  sf.innerHTML = '<option value="">All Sections</option>';
+  if (classId) {
+    const cls = classes.find(c => c.id === classId);
+    if (cls) cls.sections.forEach(s => sf.innerHTML += `<option value="${s}">${s}</option>`);
+  }
+}
+
+function resetReportFilters() {
+  document.getElementById('rptClassSelect').value = '';
+  document.getElementById('rptSectionSelect').innerHTML = '<option value="">All Sections</option>';
+  const now = new Date();
+  document.getElementById('rptFrom').value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  document.getElementById('rptTo').value = todayStr();
+  document.getElementById('reportResults').style.display = 'none';
+}
+
+let reportData = [];
+
+function generateReport() {
+  const classId = document.getElementById('rptClassSelect').value;
+  const section = document.getElementById('rptSectionSelect').value;
+  const fromDate = document.getElementById('rptFrom').value;
+  const toDate = document.getElementById('rptTo').value;
+
+  if (!fromDate || !toDate) { showToast('Please select date range','error'); return; }
+
+  const students = getLS('sams_students') || [];
+  const classes = getLS('sams_classes') || [];
+
+  let filtered = students;
+  if (classId) filtered = filtered.filter(s => s.classId === classId);
+  if (section) filtered = filtered.filter(s => s.section === section);
+
+  if (filtered.length === 0) { showToast('No students found','warning'); return; }
+
+  // Calculate working days
+  const settings = getLS('sams_settings') || { workingDays:[1,2,3,4,5] };
+  const holidays = getLS('sams_holidays') || [];
+  let workingDays = 0;
+  const d = new Date(fromDate);
+  const end = new Date(toDate);
+  while (d <= end) {
+    const dow = d.getDay();
+    const ds = d.toISOString().split('T')[0];
+    if (settings.workingDays.includes(dow) && !holidays.find(h => h.date === ds)) workingDays++;
+    d.setDate(d.getDate() + 1);
+  }
+
+  reportData = filtered.map(s => {
+    const cls = classes.find(c => c.id === s.classId);
+    const stats = getStudentAttStats(s.id, fromDate, toDate);
+    return { ...s, className: cls?cls.name:'', stats };
+  });
+
+  // Summary cards
+  const avgPct = reportData.length > 0 ? Math.round(reportData.reduce((sum, s) => sum + s.stats.pct, 0) / reportData.length) : 0;
+  const threshold = settings.threshold || 75;
+  const above = reportData.filter(s => s.stats.pct >= threshold).length;
+  const below = reportData.filter(s => s.stats.pct < threshold).length;
+
+  document.getElementById('reportSummaryCards').innerHTML = `
+    <div class="summary-card"><div class="sc-icon blue"><i class="fas fa-calendar"></i></div><div class="sc-info"><h4>Working Days</h4><div class="sc-value">${workingDays}</div></div></div>
+    <div class="summary-card"><div class="sc-icon purple"><i class="fas fa-chart-line"></i></div><div class="sc-info"><h4>Class Average</h4><div class="sc-value">${avgPct}%</div></div></div>
+    <div class="summary-card"><div class="sc-icon green"><i class="fas fa-arrow-up"></i></div><div class="sc-info"><h4>Above ${threshold}%</h4><div class="sc-value">${above}</div></div></div>
+    <div class="summary-card"><div class="sc-icon red"><i class="fas fa-arrow-down"></i></div><div class="sc-info"><h4>Below ${threshold}%</h4><div class="sc-value">${below}</div></div></div>
+  `;
+
+  // Table
+  let html = '<table id="reportDataTable"><thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Working Days</th><th>Present</th><th>Absent</th><th>Late</th><th>Percentage</th></tr></thead><tbody>';
+  reportData.forEach(s => {
+    const pctClass = s.stats.pct >= 75 ? '#e8f5e9' : s.stats.pct >= 60 ? '#fff3e0' : '#fde8e8';
+    html += `<tr style="background:${pctClass}">
+      <td>${s.roll}</td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.className} - ${s.section}</td>
+      <td>${s.stats.total}</td>
+      <td>${s.stats.present}</td>
+      <td>${s.stats.absent}</td>
+      <td>${s.stats.late}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:6px;background:var(--gray-light);border-radius:3px;"><div style="height:100%;width:${s.stats.pct}%;background:${s.stats.pct>=75?'var(--success)':s.stats.pct>=60?'var(--warning)':'var(--danger)'};border-radius:3px;"></div></div>
+          <strong>${s.stats.pct}%</strong>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += `</tbody><tfoot><tr style="font-weight:700;background:var(--primary-light);"><td colspan="7">Class Average</td><td>${avgPct}%</td></tr></tfoot></table>`;
+  document.getElementById('reportTable').innerHTML = html;
+
+  // Student dropdown for calendar
+  const ss = document.getElementById('rptStudentSelect');
+  ss.innerHTML = '<option value="">Select Student</option>' + reportData.map(s => `<option value="${s.id}">${s.name} (${s.roll})</option>`).join('');
+
+  document.getElementById('reportResults').style.display = 'block';
+}
+
+function renderStudentCalendar() {
+  const studentId = document.getElementById('rptStudentSelect').value;
+  const monthVal = document.getElementById('rptMonth').value;
+  if (!studentId || !monthVal) { document.getElementById('studentCalendar').innerHTML = ''; return; }
+  const [y, m] = monthVal.split('-').map(Number);
+  document.getElementById('studentCalendar').innerHTML = buildStudentMiniCalendar(studentId, y, m - 1);
+}
+
+function downloadCSV() {
+  if (!reportData.length) return;
+  let csv = 'Roll,Name,Class,Section,Working Days,Present,Absent,Late,Percentage\n';
+  reportData.forEach(s => {
+    csv += `${s.roll},"${s.name}",${s.className},${s.section},${s.stats.total},${s.stats.present},${s.stats.absent},${s.stats.late},${s.stats.pct}%\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'attendance_report.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV downloaded');
+}
+
+/* ============================================
+   HOLIDAYS & CALENDAR
+   ============================================ */
+let calYear, calMonth;
+
+function loadHolidaysPage() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderHolidayCalendar();
+  renderHolidayList();
+  renderUpcomingHolidays();
+}
+
+function renderHolidayCalendar() {
+  const holidays = getLS('sams_holidays') || [];
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = todayStr();
+  const monthName = new Date(calYear, calMonth, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+
+  let html = `<div class="calendar-header">
+    <button class="cal-nav-btn" onclick="calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderHolidayCalendar();"><i class="fas fa-chevron-left"></i></button>
+    <h3>${monthName}</h3>
+    <button class="cal-nav-btn" onclick="calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderHolidayCalendar();"><i class="fas fa-chevron-right"></i></button>
+  </div>
+  <div class="calendar-grid">`;
+
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="cal-day-name">${d}</div>`);
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow = new Date(calYear, calMonth, d).getDay();
+    const holiday = holidays.find(h => h.date === ds);
+    const isWeekend = dow === 0 || dow === 6;
+    const isToday = ds === today;
+
+    let cls = 'cal-day';
+    if (holiday) cls += ' holiday';
+    else if (isWeekend) cls += ' weekend';
+    if (isToday) cls += ' today';
+
+    html += `<div class="${cls}" onclick="handleCalDayClick('${ds}')">
+      <div>${d}</div>
+      ${holiday ? `<span class="holiday-name">${holiday.name}</span>` : ''}
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('holidayCalendar').innerHTML = html;
+}
+
+function handleCalDayClick(dateStr) {
+  const holidays = getLS('sams_holidays') || [];
+  const existing = holidays.find(h => h.date === dateStr);
+  if (existing) {
+    showConfirm('Remove Holiday', `Remove "${existing.name}" on ${formatDate(dateStr)}?`, 'Remove', () => {
+      const filtered = holidays.filter(h => h.date !== dateStr);
+      setLS('sams_holidays', filtered);
+      addActivity('Holiday removed: ' + existing.name);
+      showToast('Holiday removed','warning');
+      renderHolidayCalendar();
+      renderHolidayList();
+      renderUpcomingHolidays();
+    });
+  } else {
+    document.getElementById('holidayDate').value = dateStr;
+    document.getElementById('holidayName').value = '';
+    document.getElementById('holidayModalTitle').textContent = 'Add Holiday - ' + formatDate(dateStr);
+    openModal('holidayModal');
+  }
+}
+
+function saveHoliday() {
+  const date = document.getElementById('holidayDate').value;
+  const name = document.getElementById('holidayName').value.trim();
+  if (!name) { showToast('Please enter holiday name','error'); return; }
+  const holidays = getLS('sams_holidays') || [];
+  if (holidays.find(h => h.date === date)) { showToast('Holiday already exists for this date','error'); return; }
+  holidays.push({ date, name });
+  holidays.sort((a,b) => a.date.localeCompare(b.date));
+  setLS('sams_holidays', holidays);
+  addActivity('Holiday added: ' + name + ' on ' + formatDate(date));
+  showToast('Holiday added');
+  closeModal('holidayModal');
+  renderHolidayCalendar();
+  renderHolidayList();
+  renderUpcomingHolidays();
+}
+
+function renderHolidayList() {
+  const holidays = getLS('sams_holidays') || [];
+  document.getElementById('holidayCount').textContent = holidays.length;
+  document.getElementById('holidayList').innerHTML = holidays.map(h => `
+    <div class="holiday-item">
+      <div><strong>${h.name}</strong><br><span style="font-size:11px;color:var(--text-light);">${formatDate(h.date)} (${getDayName(h.date)})</span></div>
+      <button class="btn-icon" style="background:#fde8e8;color:var(--danger);" onclick="removeHoliday('${h.date}')"><i class="fas fa-trash"></i></button>
+    </div>
+  `).join('') || '<p style="font-size:13px;color:var(--text-light);">No holidays added</p>';
+}
+
+function removeHoliday(date) {
+  let holidays = getLS('sams_holidays') || [];
+  holidays = holidays.filter(h => h.date !== date);
+  setLS('sams_holidays', holidays);
+  showToast('Holiday removed','warning');
+  renderHolidayCalendar();
+  renderHolidayList();
+  renderUpcomingHolidays();
+}
+
+function renderUpcomingHolidays() {
+  const holidays = getLS('sams_holidays') || [];
+  const today = todayStr();
+  const upcoming = holidays.filter(h => h.date >= today).slice(0, 5);
+  document.getElementById('upcomingHolidays').innerHTML = upcoming.map(h => `
+    <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+      <strong>${h.name}</strong><br>
+      <span style="font-size:11px;color:var(--text-light);">${formatDate(h.date)} (${getDayName(h.date)})</span>
+    </div>
+  `).join('') || '<p style="font-size:13px;color:var(--text-light);">No upcoming holidays</p>';
+}
+
+/* ============================================
+   USER MANAGEMENT
+   ============================================ */
+function loadUsersPage() { renderUserTable(); }
+
+function renderUserTable() {
+  const users = getLS('sams_users') || [];
+  let html = '<table><thead><tr><th>Username</th><th>Role</th><th>Created</th><th>Last Login</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+  users.forEach(u => {
+    const roleBadge = u.role === 'admin' ? 'badge-danger' : 'badge-info';
+    html += `<tr>
+      <td><strong>${u.username}</strong></td>
+      <td><span class="badge ${roleBadge}">${u.role}</span></td>
+      <td>${formatDate(u.created)}</td>
+      <td>${u.lastLogin ? formatDateTime(u.lastLogin) : 'Never'}</td>
+      <td>
+        <label class="toggle-switch">
+          <input type="checkbox" ${u.status!=='inactive'?'checked':''} onchange="toggleUserStatus('${u.username}',this.checked)" ${u.username==='admin'?'disabled':''}>
+          <span class="toggle-slider"></span>
+        </label>
+      </td>
+      <td>
+        <button class="btn-icon" style="background:#e8f5e9;color:var(--success);" onclick="openEditUser('${u.username}')" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon" style="background:#fde8e8;color:var(--danger);" onclick="deleteUser('${u.username}')" title="Delete" ${u.username==='admin'?'disabled style="opacity:0.3;cursor:not-allowed;"':''}><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('userTable').innerHTML = html;
+}
+
+function addUser() {
+  const username = document.getElementById('newUserName').value.trim();
+  const password = document.getElementById('newUserPass').value;
+  const confirm = document.getElementById('newUserConfirm').value;
+  const role = document.getElementById('newUserRole').value;
+
+  if (!username) { showToast('Username is required','error'); return; }
+  if (password.length < 6) { showToast('Password must be at least 6 characters','error'); return; }
+  if (password !== confirm) { showToast('Passwords do not match','error'); return; }
+
+  const users = getLS('sams_users') || [];
+  if (users.find(u => u.username === username)) { showToast('Username already exists','error'); return; }
+
+  users.push({ username, password, role, created: new Date().toISOString(), lastLogin: '', status: 'active' });
+  setLS('sams_users', users);
+  addActivity('New user created: ' + username);
+  showToast('User added successfully');
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserPass').value = '';
+  document.getElementById('newUserConfirm').value = '';
+  document.getElementById('newUserStrength').style.width = '0';
+  document.getElementById('newUserStrength').className = 'strength-bar';
+  renderUserTable();
+}
+
+function checkNewUserPassStr() {
+  const p = document.getElementById('newUserPass').value;
+  const el = document.getElementById('newUserStrength');
+  if (p.length < 4) { el.className = 'strength-bar strength-weak'; el.style.width = '33%'; }
+  else if (p.length < 8 || !/[A-Z]/.test(p) || !/[0-9]/.test(p)) { el.className = 'strength-bar strength-medium'; el.style.width = '66%'; }
+  else { el.className = 'strength-bar strength-strong'; el.style.width = '100%'; }
+  if (!p) el.style.width = '0';
+}
+
+function toggleUserStatus(username, active) {
+  const users = getLS('sams_users') || [];
+  const u = users.find(x => x.username === username);
+  if (u) u.status = active ? 'active' : 'inactive';
+  setLS('sams_users', users);
+  showToast(`User ${username} ${active?'activated':'deactivated'}`);
+}
+
+function openEditUser(username) {
+  const users = getLS('sams_users') || [];
+  const u = users.find(x => x.username === username);
+  if (!u) return;
+  document.getElementById('editUserUsername').value = username;
+  document.getElementById('editUserTitle').textContent = 'Edit User: ' + username;
+  document.getElementById('editUserRole').value = u.role;
+  document.getElementById('editUserPass').value = '';
+  openModal('editUserModal');
+}
+
+function updateUser() {
+  const username = document.getElementById('editUserUsername').value;
+  const role = document.getElementById('editUserRole').value;
+  const newPass = document.getElementById('editUserPass').value;
+  const users = getLS('sams_users') || [];
+  const u = users.find(x => x.username === username);
+  if (!u) return;
+  u.role = role;
+  if (newPass) {
+    if (newPass.length < 6) { showToast('Password must be at least 6 characters','error'); return; }
+    u.password = newPass;
+  }
+  setLS('sams_users', users);
+  addActivity('User updated: ' + username);
+  showToast('User updated');
+  closeModal('editUserModal');
+  renderUserTable();
+}
+
+function deleteUser(username) {
+  if (username === 'admin') { showToast('Cannot delete default admin','error'); return; }
+  showConfirm('Delete User', `Are you sure you want to delete user "${username}"?`, 'Yes, Delete', () => {
+    let users = getLS('sams_users') || [];
+    users = users.filter(u => u.username !== username);
+    setLS('sams_users', users);
+    addActivity('User deleted: ' + username);
+    showToast('User deleted','warning');
+    renderUserTable();
+  });
+}
+
+/* ============================================
+   SETTINGS
+   ============================================ */
+function loadSettingsPage() {
+  const school = getLS('sams_school') || {};
+  document.getElementById('setSchoolName').value = school.name || '';
+  document.getElementById('setPrincipal').value = school.principal || '';
+  document.getElementById('setAddress').value = school.address || '';
+  document.getElementById('setContact').value = school.contact || '';
+  document.getElementById('setEmail').value = school.email || '';
+  document.getElementById('setLogo').value = school.logo || '';
+
+  const settings = getLS('sams_settings') || {};
+  document.getElementById('setThreshold').value = settings.threshold || 75;
+  document.getElementById('darkModeToggle').checked = settings.darkMode || false;
+
+  // Working days
+  const wd = settings.workingDays || [1,2,3,4,5];
+  document.querySelectorAll('#workingDaysChecks input').forEach(cb => {
+    cb.checked = wd.includes(parseInt(cb.value));
+  });
+
+  // Color
+  const color = settings.accentColor || '#1a73e8';
+  document.querySelectorAll('.color-option').forEach(el => {
+    el.classList.toggle('active', el.dataset.color === color);
+  });
+}
+
+function loadSettingsUI() {
+  const settings = getLS('sams_settings') || {};
+  if (settings.darkMode) document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  if (settings.accentColor) {
+    document.documentElement.style.setProperty('--primary', settings.accentColor);
+  }
+}
+
+function saveSchoolInfo() {
+  const school = {
+    name: document.getElementById('setSchoolName').value.trim(),
+    principal: document.getElementById('setPrincipal').value.trim(),
+    address: document.getElementById('setAddress').value.trim(),
+    contact: document.getElementById('setContact').value.trim(),
+    email: document.getElementById('setEmail').value.trim(),
+    logo: document.getElementById('setLogo').value.trim()
+  };
+  setLS('sams_school', school);
+  document.getElementById('headerSchoolName').textContent = school.name || 'School';
+  document.getElementById('loginSchoolName').textContent = school.name || 'School';
+  addActivity('School information updated');
+  showToast('School info saved');
+}
+
+function toggleDarkMode() {
+  const settings = getLS('sams_settings') || {};
+  settings.darkMode = document.getElementById('darkModeToggle').checked;
+  setLS('sams_settings', settings);
+  loadSettingsUI();
+}
+
+function setAccentColor(el) {
+  document.querySelectorAll('.color-option').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  const settings = getLS('sams_settings') || {};
+  settings.accentColor = el.dataset.color;
+  setLS('sams_settings', settings);
+  loadSettingsUI();
+}
+
+function saveAttSettings() {
+  const settings = getLS('sams_settings') || {};
+  settings.threshold = parseInt(document.getElementById('setThreshold').value) || 75;
+  const wd = [];
+  document.querySelectorAll('#workingDaysChecks input:checked').forEach(cb => wd.push(parseInt(cb.value)));
+  settings.workingDays = wd;
+  setLS('sams_settings', settings);
+  addActivity('Attendance settings updated');
+  showToast('Attendance settings saved');
+}
+
+function changeMyPassword() {
+  const session = getSS('sams_session');
+  if (!session) return;
+  const curr = document.getElementById('setCurrPass').value;
+  const newP = document.getElementById('setNewPass').value;
+  const conf = document.getElementById('setConfirmPass').value;
+  const users = getLS('sams_users') || [];
+  const u = users.find(x => x.username === session.username);
+  if (!u || u.password !== curr) { showToast('Current password is incorrect','error'); return; }
+  if (newP.length < 6) { showToast('New password must be at least 6 characters','error'); return; }
+  if (newP !== conf) { showToast('Passwords do not match','error'); return; }
+  u.password = newP;
+  setLS('sams_users', users);
+  document.getElementById('setCurrPass').value = '';
+  document.getElementById('setNewPass').value = '';
+  document.getElementById('setConfirmPass').value = '';
+  document.getElementById('settingsPassStrength').style.width = '0';
+  addActivity('Password changed');
+  showToast('Password changed successfully');
+}
+
+function checkSettingsPassStr() {
+  const p = document.getElementById('setNewPass').value;
+  const el = document.getElementById('settingsPassStrength');
+  if (p.length < 4) { el.className = 'strength-bar strength-weak'; el.style.width = '33%'; }
+  else if (p.length < 8 || !/[A-Z]/.test(p) || !/[0-9]/.test(p)) { el.className = 'strength-bar strength-medium'; el.style.width = '66%'; }
+  else { el.className = 'strength-bar strength-strong'; el.style.width = '100%'; }
+  if (!p) el.style.width = '0';
+}
+
+function exportData() {
+  const data = {};
+  ['sams_users','sams_school','sams_settings','sams_classes','sams_students','sams_attendance','sams_holidays','sams_activity'].forEach(key => {
+    data[key] = getLS(key);
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'sams_backup_' + todayStr() + '.json'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Data exported successfully');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      Object.keys(data).forEach(key => setLS(key, data[key]));
+      showToast('Data imported successfully! Refreshing...');
+      setTimeout(() => location.reload(), 1500);
+    } catch(err) {
+      showToast('Invalid JSON file','error');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function clearAttData() {
+  showConfirm('Clear Attendance Data', 'This will delete ALL attendance records. Students and other data will be kept. Continue?', 'Yes, Clear', () => {
+    setLS('sams_attendance', {});
+    addActivity('All attendance data cleared');
+    showToast('Attendance data cleared','warning');
+  }, 'btn-warning');
+}
+
+function resetAllData() {
+  showConfirm('Reset ALL Data', 'This will delete EVERYTHING and reset the app. Are you absolutely sure?', 'Yes, Reset Everything', () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    showToast('All data reset. Reloading...');
+    setTimeout(() => location.reload(), 1500);
+  });
+}
+
+/* ============================================
+   INITIALIZATION
+   ============================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  initSampleData();
+  checkSession();
+  // Set date input defaults
+  const today = todayStr();
+  document.getElementById('attDate').value = today;
+});
+</script>
+</body>
+</html>
